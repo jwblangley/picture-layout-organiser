@@ -40,6 +40,13 @@ const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png'];
 
 var lastUpdate = 0;
 
+function getBackendPorts() {
+  return ({
+    'backend': parseInt(process.env.REACT_APP_BACKEND_PORT_BASE),
+    'imageHost': parseInt(process.env.REACT_APP_BACKEND_PORT_BASE) + 1
+  });
+}
+
 class App extends Component {
 
   constructor(props) {
@@ -72,6 +79,7 @@ class App extends Component {
     document.removeEventListener("keydown", this.handleKeyDown, false);
   }
 
+  // Universal keyDown handler - used for moving selected item
   handleKeyDown(e) {
     const indexChangeMap = new Map([[LEFT_KEY, -1], [UP_KEY, -1 * NUM_COLS], [RIGHT_KEY, 1], [DOWN_KEY, NUM_COLS]]);
     if (this.state.selectedIndex !== NONE_INDEX && indexChangeMap.has(e.keyCode)) {
@@ -94,8 +102,8 @@ class App extends Component {
     }
   }
 
+  // 2 seconds after last update (not necessarily this call), issue a save
   delayedSaveAfterLastEdit() {
-    // 2 seconds after last update, issue a save
     const delay = 2000;
     lastUpdate = Date.now();
     setTimeout(function(){
@@ -111,17 +119,46 @@ class App extends Component {
     this.setState({selectedIndex: NONE_INDEX})
   }
 
+  isContentLocked(index) {
+    // N.B: content outside of the array is said to be locked also
+    if (index < 0 || index >= this.state.content.length) {
+      return true;
+    }
+    return this.state.content[index].locked;
+  }
+
+  // Set all content items at and above the given index to locked
+  lockContentAfterIndex(lockIndex) {
+    var updatedContent = [...this.state.content];
+    updatedContent = updatedContent.map((item, itemIndex) => {
+      var newItem = {...item};
+      newItem.locked = (itemIndex >= lockIndex);
+      return newItem;
+    });
+    this.deselectSelectedItem();
+    this.setState({'content': updatedContent, 'saved': false});
+    this.delayedSaveAfterLastEdit();
+  }
+
+
+  // When a different account is selcted
+  // Also handle new account creation
   handleAccountSelect(option) {
     this.deselectSelectedItem();
     if (option === 'create-new') {
       if (this.state.backendAddress !== null) {
+        // Create new account
         var newName = prompt("New account name");
+        // Remove whitespace from beginning and end of input
+        newName = newName.trim();
         if (newName !== null && newName !== "") {
+          // Create account then switch to that new account - if a duplicate name is entered, enter that account
           createAccount(newName, this.state.backendAddress, function() {
+            // Update list of users
             listUsers(this.state.backendAddress, (users) => {
               this.setState({'users': users});
               this.accountSelectorRef.current.value = newName;
-
+              // Get new user's content - usually empty unless duplicate name used
               getUserContent(newName, this.state.backendAddress, function(content){
                 this.setState(
                   {
@@ -135,11 +172,13 @@ class App extends Component {
         }
       }
     } else if (option === '') {
+      // None selected
       this.setState({
         'username': null,
         'content': []
       });
     } else {
+      // Default - switch to an existing user
       var username = option;
       getUserContent(username, this.state.backendAddress, function(content){
         this.setState(
@@ -152,9 +191,10 @@ class App extends Component {
     }
   }
 
-  saveCaption(newCaption) {
+  // Save caption text to content at given index
+  saveCaption(newCaption, index) {
     var content = [...this.state.content];
-    content[this.state.editingIndex].caption = newCaption;
+    content[index].caption = newCaption;
     this.setState({
       'content': content,
       'saved': false,
@@ -162,6 +202,7 @@ class App extends Component {
     this.delayedSaveAfterLastEdit();
   }
 
+  // Remove content from given index
   deleteImage(index) {
     var content = [...this.state.content];
     // Delete 1 item at index, index
@@ -170,44 +211,23 @@ class App extends Component {
     this.delayedSaveAfterLastEdit();
   }
 
-  isContentLocked(index) {
-    // N.B: content outside of the array is said to be locked also
-    if (index < 0 || index >= this.state.content.length) {
-      return true;
-    }
-    return this.state.content[index].locked;
-  }
-
-  lockContentBelowIndex(lockIndex) {
-    var updatedContent = [...this.state.content];
-    updatedContent = updatedContent.map((item, itemIndex) => {
-      var newItem = {...item};
-      newItem.locked = (itemIndex >= lockIndex);
-      return newItem;
-    });
-    this.deselectSelectedItem();
-    this.setState({'content': updatedContent, 'saved': false});
-    this.delayedSaveAfterLastEdit();
-  }
-
+  // Report a status message to the screen
   reportStatusMessage(messageText, positive) {
-    this.setState((prevState, props) => {
-          return {message: prevState.message + '!'}
-        })
-
-
-    this.setState((prevState, props) =>
+    // Use previousState so that multiple updates are not lost
+    this.setState((previousState, props) =>
       ({'statusMessages':
         [
           {'text': messageText, 'positive': positive},
-          ...prevState.statusMessages
+          ...previousState.statusMessages
         ]
       })
     );
   }
 
+  // Main render method
   render() {
 
+    // Prepare image upload button and functionality
     var imageUploadButton = (
       <span>
         <button
@@ -227,6 +247,7 @@ class App extends Component {
             var validFiles = allowingFiles.pass;
             var disallowedFiles = allowingFiles.fail;
 
+            // Report disallowed files
             disallowedFiles.forEach(f => this.reportStatusMessage("Could not upload \"" + f.name + "\" - unsupported type", false));
 
             // N.B: Content must be saved before upload
@@ -248,6 +269,7 @@ class App extends Component {
                       this.reportStatusMessage("Failed to upload, please try again", false)
                     } else {
                       this.reportStatusMessage(res.text, true);
+                      // Display newly uploaded content
                       getUserContent(this.state.username, this.state.backendAddress, function(content){
                         this.setState(
                           {
@@ -257,6 +279,7 @@ class App extends Component {
                         );
                       }.bind(this));
                     }
+                    // Indicate to state that uploading is finished
                     this.setState({'uploading': false});
                   }.bind(this)
                 );
@@ -264,16 +287,100 @@ class App extends Component {
             } else {
               // Should never be reached as inputs are disabled in this case
               this.reportStatusMessage("Something went wrong, please try again", false);
+              // N.B: uploading has not been set to true, so we do not need to set it to false here
             }
 
             // Remove any file from selection
-            // Causes confusing behaviour when selecting the same file twice in a row otherwise
+            // Causes confusing behaviour when selecting the same file twice in a row otherwise due to onChange
             e.target.value = null;
           }.bind(this)}
         />
       </span>
     );
 
+    var topBar = (
+      <div className="top-bar">
+        <div className="admin-bar">
+          <span className="backend-address-input">
+            Backend Address:
+            <input
+              type="text"
+              disabled={this.state.uploading || this.state.editingIndex !== NONE_INDEX}
+              onKeyDown={
+                function(e){
+                  if (e.keyCode === ENTER_KEY) {
+                    var ports = getBackendPorts();
+                    var backendAddress = e.target.value + ':' + ports.backend;
+                    var imageHostAddress = e.target.value + ':' + ports.imageHost;
+                    this.setState(
+                      {
+                        'backendAddress': backendAddress,
+                        'imageHostAddress': imageHostAddress
+                      }
+                    );
+                    // Populate state with list of users
+                    listUsers(backendAddress, function(users){
+                      this.setState({'users':users})
+                    }.bind(this));
+                  }
+                }.bind(this)}
+              onFocus={function(e){
+                // Deselect item on focus so that arrow key events only affect the input
+                this.deselectSelectedItem();
+              }.bind(this)}
+            />
+          </span>
+          <span className='account-select'>
+            Account:
+            <select
+              ref={this.accountSelectorRef}
+              disabled={this.state.backendAddress === null || this.state.uploading || this.state.editingIndex !== NONE_INDEX}
+              onChange={(e) => this.handleAccountSelect(e.target.value)}
+            >
+              <option value=''>None selected</option>
+              {this.state.users.map(username =>
+                (<option key={username} value={username}>{username}</option>)
+              )}
+              <option value='create-new'>+ New account</option>
+            </select>
+            <img
+              id='account-delete-icon'
+              src={binIcon}
+              onClick={function() {
+                if (this.state.backendAddress !== null && this.state.username !== null && !this.state.uploading && this.state.editingIndex === NONE_INDEX) {
+                  if (window.confirm("Are you sure you want to delete \"" + this.state.username + "\" from the organiser")) {
+                    // Delete account, reread list of users and set current user to null user and content empty
+                    deleteAccount(this.state.username, this.state.backendAddress, function() {
+                      listUsers(this.state.backendAddress, (users) => {
+                        this.setState({'users': users, 'username': null, 'content': []});
+                        this.accountSelectorRef.current.value = '';
+                      });
+                    }.bind(this));
+                  }
+                }
+              }.bind(this)}
+            />
+          </span>
+        </div>
+        <div className='upload-status-bar'>
+          {imageUploadButton}
+          <div className="progress-bar-container">
+            <Progress max="100" color="success" striped value={this.state.uploadPercent}>{Math.round(this.state.uploadPercent, 2)}%</Progress>
+          </div>
+          {this.state.statusMessages.map((message, index) =>
+            <StatusMessage
+              text={message.text}
+              positive={message.positive}
+              handleDismiss={function(){
+                this.setState({'statusMessages': this.state.statusMessages.filter((m, i) => i !== index)});
+              }.bind(this)}
+            />
+          )}
+        </div>
+      </div>
+    );
+
+    // Prepare main gridContent for display when appropriate
     // N.B: hide content whilst uploading to prevent race conditions
     var gridContent = (
       <div id='main-grid' className='App' style={{'display': this.state.uploading ? 'none' : 'table'}}>
@@ -287,12 +394,14 @@ class App extends Component {
             locked={c.locked}
             captioned={c.caption !== ''}
             toggleLock={function(e) {
+              // Disabled when editing - otherwise lock up to here
               e.stopPropagation();
               if (this.state.editingIndex === NONE_INDEX) {
-                this.lockContentBelowIndex(index);
+                this.lockContentAfterIndex(index);
               }
             }.bind(this)}
             handleClick={function() {
+              // Disabled when editing, else if not locked, select item
               if (this.state.editingIndex === NONE_INDEX) {
                 if (!this.isContentLocked(index)) {
                   if (this.state.selectedIndex === index) {
@@ -304,6 +413,7 @@ class App extends Component {
               }
             }.bind(this)}
             handleEditClick={function(e) {
+              // If not editing something else, choose this for editing
               e.stopPropagation();
               if (this.state.editingIndex === NONE_INDEX) {
                 this.setState({'editingIndex': index, 'selectedIndex': NONE_INDEX})
@@ -315,6 +425,7 @@ class App extends Component {
       </div>
     );
 
+    // Content to render when there is no grid to show (no account selected)
     var noGridContent = (
       <div className='empty-content'>
         Please connect backend and select an account
@@ -323,90 +434,22 @@ class App extends Component {
 
     return (
       <div>
-        <div className="top-bar">
-          <div className="admin-bar">
-          <span className="backend-address-input">
-            Backend Address:
-            <input
-              type="text"
-              disabled={this.state.uploading || this.state.editingIndex !== NONE_INDEX}
-              onKeyDown={
-                function(e){
-                  if (e.keyCode === ENTER_KEY) {
-                    var backendAddress = e.target.value + ':' + (process.env.REACT_APP_BACKEND_PORT_BASE);
-                    var imageHostAddress = e.target.value + ':' + (parseInt(process.env.REACT_APP_BACKEND_PORT_BASE) + 1);
-                    this.setState(
-                      {
-                        'backendAddress': backendAddress,
-                        'imageHostAddress': imageHostAddress
-                      }
-                    );
-                    listUsers(backendAddress, function(users){
-                      this.setState({'users':users})
-                    }.bind(this));
-                  }
-                }.bind(this)}
-                onFocus={function(e){
-                  this.deselectSelectedItem();
-                }.bind(this)}
-              />
-            </span>
-            <span className='account-select'>
-              Account:
-              <select
-                ref={this.accountSelectorRef}
-                disabled={this.state.backendAddress === null || this.state.uploading || this.state.editingIndex !== NONE_INDEX}
-                onChange={(e) => this.handleAccountSelect(e.target.value)}
-              >
-                <option value=''>None selected</option>
-                {this.state.users.map(username =>
-                  (<option key={username} value={username}>{username}</option>)
-                )}
-                <option value='create-new'>+ New account</option>
-              </select>
-              <img
-                id='account-delete-icon'
-                src={binIcon}
-                onClick={function() {
-                  if (this.state.backendAddress !== null && this.state.username !== null && !this.state.uploading && this.state.editingIndex === NONE_INDEX) {
-                    if (window.confirm("Are you sure you want to delete \"" + this.state.username + "\" from the organiser")) {
-                      deleteAccount(this.state.username, this.state.backendAddress, function() {
-                        listUsers(this.state.backendAddress, (users) => {
-                          this.setState({'users': users, 'content': []});
-                          this.accountSelectorRef.current.value = '';
-                        });
-                      }.bind(this));
-                    }
-                  }
-                }.bind(this)}
-              />
-            </span>
-          </div>
-          <div className='upload-status-bar'>
-            {imageUploadButton}
-              <div className="progress-bar-container">
-                <Progress max="100" color="success" striped value={this.state.uploadPercent}>{Math.round(this.state.uploadPercent, 2)}%</Progress>
-              </div>
-            {this.state.statusMessages.map((message, index) =>
-              <StatusMessage
-                text={message.text}
-                positive={message.positive}
-                handleDismiss={function(){
-                  this.setState({'statusMessages': this.state.statusMessages.filter((m, i) => i !== index)});
-                }.bind(this)}
-              />
-            )}
-          </div>
-        </div>
+        {topBar}
         <div className='page-content'>
-          {(this.state.backendAddress !== null && this.state.username !== null) ? gridContent : noGridContent}
+
+          {
+            (this.state.backendAddress !== null && this.state.username !== null)
+              ? gridContent
+              : noGridContent
+          }
+
           {
             this.state.editingIndex !== NONE_INDEX &&
             <EditPage
               text={this.state.content[this.state.editingIndex].caption}
               image={getFormattedAddress(this.state.imageHostAddress) + '/' + this.state.content[this.state.editingIndex].img}
               closePage={() => this.setState({'editingIndex': NONE_INDEX})}
-              saveCaption={this.saveCaption.bind(this)}
+              saveCaption={(text) => this.saveCaption(text, this.state.editingIndex)}
               deleteImage={function() {
                 if (window.confirm("Delete image?")) {
                   this.deleteImage(this.state.editingIndex);
@@ -415,6 +458,7 @@ class App extends Component {
               }.bind(this)}
             />
           }
+          
         </div>
       </div>
     );
