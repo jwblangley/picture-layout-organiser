@@ -11,7 +11,7 @@ class ImageSquare extends Component {
 
   render() {
     var backgroundImageStyle = {
-      'backgroundImage': 'url(' + this.props.image + ')'
+      'backgroundImage': 'url(' + this.props.media + ')'
     }
 
     var classString = 'image-square' + (this.props.selected ? ' selected' : '');
@@ -38,7 +38,7 @@ class ImageSquare extends Component {
           (<img
             src={captioned}
             className='captioned-icon icon'
-            />)
+          />)
         }
       </div>
     );

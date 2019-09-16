@@ -62,8 +62,8 @@ export function deleteAccount(username, backendAddress, callback) {
     .then(callback);
 }
 
-export function uploadUserImages(files, username, backendAddress, progressCallback, callback) {
-  const query_url = getFormattedAddress(backendAddress) + '/' + username + '/addUserImages';
+export function uploadUserMedia(files, username, backendAddress, progressCallback, callback) {
+  const query_url = getFormattedAddress(backendAddress) + '/' + username + '/addUserMedia';
   const formData = new FormData();
   for (var i = 0; i < files.length; i++) {
     formData.append('file', files[i]);

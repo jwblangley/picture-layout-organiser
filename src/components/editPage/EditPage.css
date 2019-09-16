@@ -19,7 +19,7 @@
   cursor: pointer;
 }
 
-.image-delete-icon {
+.media-delete-icon {
   width: 1.5rem;
   cursor: pointer;
   position: absolute;
@@ -28,7 +28,7 @@
   cursor: pointer;
 }
 
-.image-preview {
+.media-preview {
   width: 52vmin;
   height: 52vmin;
   margin: 0.25vmin;

@@ -21,7 +21,7 @@ import {
   saveUserContent,
   createAccount,
   deleteAccount,
-  uploadUserImages
+  uploadUserMedia
   } from './adapters/ManagerAdapter.js';
 
 require('dotenv').config();
@@ -254,7 +254,7 @@ class App extends Component {
             if (this.state.username !== null && this.state.saved) {
               if (validFiles.length > 0) {
                 this.setState({'uploading': true, 'uploadPercent': 0});
-                uploadUserImages(
+                uploadUserMedia(
                   validFiles,
                   this.state.username,
                   this.state.backendAddress,
@@ -389,7 +389,7 @@ class App extends Component {
         cols={NUM_COLS}
         gridContent={this.state.content.map((c, index) => (
           <ImageSquare
-            image={getFormattedAddress(this.state.imageHostAddress) + '/' + c.img}
+            media={getFormattedAddress(this.state.imageHostAddress) + '/' + c.addr}
             selected={this.state.selectedIndex === index}
             locked={c.locked}
             captioned={c.caption !== ''}
@@ -447,7 +447,7 @@ class App extends Component {
             this.state.editingIndex !== NONE_INDEX &&
             <EditPage
               text={this.state.content[this.state.editingIndex].caption}
-              image={getFormattedAddress(this.state.imageHostAddress) + '/' + this.state.content[this.state.editingIndex].img}
+              media={getFormattedAddress(this.state.imageHostAddress) + '/' + this.state.content[this.state.editingIndex].addr}
               closePage={() => this.setState({'editingIndex': NONE_INDEX})}
               saveCaption={(text) => this.saveCaption(text, this.state.editingIndex)}
               deleteImage={function() {
@@ -458,7 +458,7 @@ class App extends Component {
               }.bind(this)}
             />
           }
-          
+
         </div>
       </div>
     );

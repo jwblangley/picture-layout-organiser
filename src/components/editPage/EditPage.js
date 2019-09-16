@@ -16,7 +16,7 @@ class EditPage extends Component {
 
   render() {
     var backgroundImageStyle = {
-      'backgroundImage': 'url(' + this.props.image + ')'
+      'backgroundImage': 'url(' + this.props.media + ')'
     }
 
 
@@ -29,12 +29,12 @@ class EditPage extends Component {
         />
         <div
           style={backgroundImageStyle}
-          className='image-preview'
+          className='media-preview'
         >
         </div>
         <img
           src={binImage}
-          className='image-delete-icon'
+          className='media-delete-icon'
           onClick={this.props.deleteImage}
         />
         <textarea
