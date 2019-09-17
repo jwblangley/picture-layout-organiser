@@ -17,7 +17,7 @@ class EditPage extends Component {
   render() {
 
     var mediaPreview;
-    if (this.props.video) {
+    if (this.props.mediaType === 'video') {
       mediaPreview = (
         <video className="video-preview" controls>
           <source src={this.props.media} type="video/mp4" />

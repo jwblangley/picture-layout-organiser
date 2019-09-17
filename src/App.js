@@ -390,8 +390,8 @@ class App extends Component {
         gridContent={this.state.content.map((c, index) => (
           <ImageSquare
             media={getFormattedAddress(this.state.imageHostAddress) + '/' + c.addr}
+            mediaType={c.mediaType}
             captioned={c.caption !== ''}
-            video={c.video}
             thumbnail={getFormattedAddress(this.state.imageHostAddress) + '/' + c.thumbnail}
             selected={this.state.selectedIndex === index}
             locked={c.locked}
@@ -450,7 +450,7 @@ class App extends Component {
             <EditPage
               text={this.state.content[this.state.editingIndex].caption}
               media={getFormattedAddress(this.state.imageHostAddress) + '/' + this.state.content[this.state.editingIndex].addr}
-              video={this.state.content[this.state.editingIndex].video}
+              mediaType={this.state.content[this.state.editingIndex].mediaType}
               closePage={() => this.setState({'editingIndex': NONE_INDEX})}
               saveCaption={(text) => this.saveCaption(text, this.state.editingIndex)}
               deleteImage={function() {

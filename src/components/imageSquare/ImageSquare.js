@@ -10,8 +10,17 @@ class ImageSquare extends Component {
 
 
   render() {
-    var backgroundImageStyle = {
-      'backgroundImage': 'url(' + (this.props.video ? this.props.thumbnail : this.props.media) + ')'
+    var backgroundImageStyle;
+
+    if (this.props.mediaType === 'video'){
+      backgroundImageStyle = {
+        'backgroundImage': 'url(' + this.props.thumbnail + ')'
+      }
+    } else {
+      // Standard image
+      backgroundImageStyle = {
+        'backgroundImage': 'url(' + this.props.media + ')'
+      }
     }
 
     var classString = 'image-square' + (this.props.selected ? ' selected' : '');
