@@ -36,11 +36,12 @@
 
 #upload-button {
   margin-right: 2vmin;
+  vertical-align: middle;
 }
 
 .progress-bar-container {
   display: inline-block;
-  width: 80vw;
+  width: 75vw;
 }
 
 .page-content {

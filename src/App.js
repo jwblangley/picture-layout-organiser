@@ -7,6 +7,7 @@ import Grid from './components/grid/Grid.js';
 import ImageSquare from './components/imageSquare/ImageSquare.js';
 import StatusMessage from './components/statusMessage/StatusMessage.js';
 import EditPage from './components/editPage/EditPage.js';
+import ToggleSwitch from './components/toggleSwitch/ToggleSwitch.js';
 
 import arraySwap from './ArraySwap.js';
 import partition from './Partition.js';
@@ -82,6 +83,7 @@ class App extends Component {
 
   // Universal keyDown handler - used for moving selected item
   handleKeyDown(e) {
+    // On ESC, deselect items and close edit page
     if (e.keyCode === ESC_KEY) {
       this.setState({'selectedIndex': NONE_INDEX, 'editingIndex': NONE_INDEX});
     }
@@ -369,6 +371,11 @@ class App extends Component {
           </span>
         </div>
         <div className='upload-status-bar'>
+          <ToggleSwitch
+            initial={false}
+            text={"Gallery upload: "}
+            onChange={checked => this.setState({'galleryUpload': checked})}
+          />
           {imageUploadButton}
           <div className="progress-bar-container">
             <Progress max="100" color="success" striped value={this.state.uploadPercent}>{Math.round(this.state.uploadPercent, 2)}%</Progress>
