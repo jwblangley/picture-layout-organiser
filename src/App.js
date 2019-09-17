@@ -31,6 +31,7 @@ const NUM_COLS = 3;
 const NONE_INDEX = -1;
 
 const ENTER_KEY = 13;
+const ESC_KEY = 27;
 const LEFT_KEY = 37;
 const UP_KEY = 38;
 const RIGHT_KEY = 39;
@@ -81,6 +82,9 @@ class App extends Component {
 
   // Universal keyDown handler - used for moving selected item
   handleKeyDown(e) {
+    if (e.keyCode === ESC_KEY) {
+      this.setState({'selectedIndex': NONE_INDEX, 'editingIndex': NONE_INDEX});
+    }
     const indexChangeMap = new Map([[LEFT_KEY, -1], [UP_KEY, -1 * NUM_COLS], [RIGHT_KEY, 1], [DOWN_KEY, NUM_COLS]]);
     if (this.state.selectedIndex !== NONE_INDEX && indexChangeMap.has(e.keyCode)) {
 
