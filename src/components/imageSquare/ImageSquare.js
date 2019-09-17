@@ -11,7 +11,7 @@ class ImageSquare extends Component {
 
   render() {
     var backgroundImageStyle = {
-      'backgroundImage': 'url(' + this.props.media + ')'
+      'backgroundImage': 'url(' + (this.props.video ? this.props.thumbnail : this.props.media) + ')'
     }
 
     var classString = 'image-square' + (this.props.selected ? ' selected' : '');

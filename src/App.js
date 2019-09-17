@@ -36,7 +36,7 @@ const UP_KEY = 38;
 const RIGHT_KEY = 39;
 const DOWN_KEY = 40;
 
-const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png'];
+const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'video/mp4'];
 
 var lastUpdate = 0;
 
@@ -390,9 +390,11 @@ class App extends Component {
         gridContent={this.state.content.map((c, index) => (
           <ImageSquare
             media={getFormattedAddress(this.state.imageHostAddress) + '/' + c.addr}
+            captioned={c.caption !== ''}
+            video={c.video}
+            thumbnail={getFormattedAddress(this.state.imageHostAddress) + '/' + c.thumbnail}
             selected={this.state.selectedIndex === index}
             locked={c.locked}
-            captioned={c.caption !== ''}
             toggleLock={function(e) {
               // Disabled when editing - otherwise lock up to here
               e.stopPropagation();
