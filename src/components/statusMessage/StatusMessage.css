@@ -5,8 +5,8 @@
   margin-bottom: 0.5vmin;
   padding: 0.5vmin;
   border-radius: 1vmin;
-  --color-positive: rgb(40, 167, 69);
-  --color-negative: rgb(226, 96, 96);
+  --color-positive: var(--success);
+  --color-negative: var(--danger);
 }
 
 .positive {
