@@ -5,9 +5,9 @@ import ringCircle from '../../images/ring-circle.svg';
 import padlock from '../../images/padlock.svg';
 import pencil from '../../images/pencil.svg';
 import captioned from '../../images/captioned.svg';
+import videoIcon from '../../images/video.svg';
 
 class ImageSquare extends Component {
-
 
   render() {
     var backgroundImageStyle;
@@ -47,6 +47,12 @@ class ImageSquare extends Component {
           (<img
             src={captioned}
             className='captioned-icon icon'
+          />)
+        }
+        {this.props.mediaType !== 'image' && !this.props.locked &&
+          (<img
+            src={this.props.mediaType === 'video' ? videoIcon: null}
+            className='media-type-icon icon'
           />)
         }
       </div>

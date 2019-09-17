@@ -9,6 +9,7 @@
   background-size: cover;
   cursor: pointer;
   background-color: var(--color-gray-light);
+  position: relative;
 }
 
 .selected {
@@ -25,7 +26,8 @@
 }
 
 .lock-ring {
-  float: right;
+  position: absolute;
+  right: 0;
 }
 
 .edit-icon {
@@ -36,8 +38,10 @@
   display: block;
 }
 
-.captioned-icon {
-
+.media-type-icon {
+  position: absolute;
+  right: 0;
+  bottom: 0;
 }
 
 @media screen and (max-aspect-ratio: 9/10) {
