@@ -15,8 +15,26 @@ class EditPage extends Component {
   }
 
   render() {
-    var backgroundImageStyle = {
-      'backgroundImage': 'url(' + this.props.media + ')'
+
+    var mediaPreview;
+    if (this.props.video) {
+      mediaPreview = (
+        <video className="video-preview" controls>
+          <source src={this.props.media} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      );
+    } else {
+      // Standard image
+      var backgroundImageStyle = {
+        'backgroundImage': 'url(' + this.props.media + ')'
+      }
+      mediaPreview = (
+        <div
+          style={backgroundImageStyle}
+          className='image-preview'
+        ></div>
+      );
     }
 
 
@@ -27,11 +45,7 @@ class EditPage extends Component {
           className='exit-icon'
           onClick={() => this.props.closePage()}
         />
-        <div
-          style={backgroundImageStyle}
-          className='media-preview'
-        >
-        </div>
+        {mediaPreview}
         <img
           src={binImage}
           className='media-delete-icon'

@@ -9,6 +9,7 @@
   z-index: 5;
   border: solid 0.1vmin black;
   text-align: center;
+  overflow-y: scroll;
 }
 
 .exit-icon {
@@ -28,7 +29,7 @@
   cursor: pointer;
 }
 
-.media-preview {
+.image-preview {
   width: 52vmin;
   height: 52vmin;
   margin: 0.25vmin;
@@ -36,9 +37,14 @@
   border: solid 0.1vmin black;
   background-position: 50% 50%;
   background-size: cover;
-  cursor: pointer;
   background-color: var(--color-gray-light);
   margin: auto
+}
+
+.video-preview {
+  width: 52vmin;
+  border: solid 0.1vmin black;
+  outline: none;
 }
 
 .caption-input-area {
@@ -52,10 +58,7 @@
 
 #save-caption-button {
   width: 52vmin;
-  position: absolute;
-  bottom: 3vmin;
-  left: 50%;
-  transform: translateX(-50%);
+  margin-top: 1vmin;
 }
 
 @media screen and (max-aspect-ratio: 7/10) {

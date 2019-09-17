@@ -450,6 +450,7 @@ class App extends Component {
             <EditPage
               text={this.state.content[this.state.editingIndex].caption}
               media={getFormattedAddress(this.state.imageHostAddress) + '/' + this.state.content[this.state.editingIndex].addr}
+              video={this.state.content[this.state.editingIndex].video}
               closePage={() => this.setState({'editingIndex': NONE_INDEX})}
               saveCaption={(text) => this.saveCaption(text, this.state.editingIndex)}
               deleteImage={function() {
