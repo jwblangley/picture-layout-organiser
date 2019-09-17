@@ -232,9 +232,61 @@ class App extends Component {
     );
   }
 
+  handleFilesSelected(e) {
+    var allowingFiles = partition(e.target.files, f => ALLOWED_MIME_TYPES.includes(f.type));
+    var validFiles = allowingFiles.pass;
+    var disallowedFiles = allowingFiles.fail;
+
+    // Report disallowed files
+    disallowedFiles.forEach(f => this.reportStatusMessage("Could not upload \"" + f.name + "\" - unsupported type", false));
+
+    // N.B: Content must be saved before upload
+    if (this.state.username !== null && this.state.saved) {
+      if (validFiles.length > 0) {
+        this.setState({'uploading': true, 'uploadPercent': 0});
+        uploadUserMedia(
+          validFiles,
+          this.state.username,
+          this.state.backendAddress,
+          // progress callback
+          function(progressEvent) {
+            var progressPercent = progressEvent.loaded / progressEvent.total * 100;
+            this.setState({'uploadPercent': progressPercent})
+          }.bind(this),
+          // callback
+          function(res) {
+            if (!res.ok) {
+              this.reportStatusMessage("Failed to upload, please try again", false)
+            } else {
+              this.reportStatusMessage(res.text, true);
+              // Display newly uploaded content
+              getUserContent(this.state.username, this.state.backendAddress, function(content){
+                this.setState(
+                  {
+                    'username': this.state.username,
+                    'content': content
+                  }
+                );
+              }.bind(this));
+            }
+            // Indicate to state that uploading is finished
+            this.setState({'uploading': false});
+          }.bind(this)
+        );
+      }
+    } else {
+      // Should never be reached as inputs are disabled in this case
+      this.reportStatusMessage("Something went wrong, please try again", false);
+      // N.B: uploading has not been set to true, so we do not need to set it to false here
+    }
+
+    // Remove any file from selection
+    // Causes confusing behaviour when selecting the same file twice in a row otherwise due to onChange
+    e.target.value = null;
+  }
+
   // Main render method
   render() {
-
     // Prepare image upload button and functionality
     var imageUploadButton = (
       <span>
@@ -250,58 +302,7 @@ class App extends Component {
           ref={this.fileUploaderRef}
           style={{display: "none"}}
           disabled={this.state.username === null || !this.state.saved || this.state.uploading || this.state.editingIndex !== NONE_INDEX}
-          onChange={function (e) {
-            var allowingFiles = partition(e.target.files, f => ALLOWED_MIME_TYPES.includes(f.type));
-            var validFiles = allowingFiles.pass;
-            var disallowedFiles = allowingFiles.fail;
-
-            // Report disallowed files
-            disallowedFiles.forEach(f => this.reportStatusMessage("Could not upload \"" + f.name + "\" - unsupported type", false));
-
-            // N.B: Content must be saved before upload
-            if (this.state.username !== null && this.state.saved) {
-              if (validFiles.length > 0) {
-                this.setState({'uploading': true, 'uploadPercent': 0});
-                uploadUserMedia(
-                  validFiles,
-                  this.state.username,
-                  this.state.backendAddress,
-                  // progress callback
-                  function(progressEvent) {
-                    var progressPercent = progressEvent.loaded / progressEvent.total * 100;
-                    this.setState({'uploadPercent': progressPercent})
-                  }.bind(this),
-                  // callback
-                  function(res) {
-                    if (!res.ok) {
-                      this.reportStatusMessage("Failed to upload, please try again", false)
-                    } else {
-                      this.reportStatusMessage(res.text, true);
-                      // Display newly uploaded content
-                      getUserContent(this.state.username, this.state.backendAddress, function(content){
-                        this.setState(
-                          {
-                            'username': this.state.username,
-                            'content': content
-                          }
-                        );
-                      }.bind(this));
-                    }
-                    // Indicate to state that uploading is finished
-                    this.setState({'uploading': false});
-                  }.bind(this)
-                );
-              }
-            } else {
-              // Should never be reached as inputs are disabled in this case
-              this.reportStatusMessage("Something went wrong, please try again", false);
-              // N.B: uploading has not been set to true, so we do not need to set it to false here
-            }
-
-            // Remove any file from selection
-            // Causes confusing behaviour when selecting the same file twice in a row otherwise due to onChange
-            e.target.value = null;
-          }.bind(this)}
+          onChange={this.handleFilesSelected.bind(this)}
         />
       </span>
     );
