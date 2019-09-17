@@ -150,25 +150,27 @@ class App extends Component {
         // Create new account
         var newName = prompt("New account name");
         // Remove whitespace from beginning and end of input
-        newName = newName.trim();
-        if (newName !== null && newName !== "") {
-          // Create account then switch to that new account - if a duplicate name is entered, enter that account
-          createAccount(newName, this.state.backendAddress, function() {
-            // Update list of users
-            listUsers(this.state.backendAddress, (users) => {
-              this.setState({'users': users});
-              this.accountSelectorRef.current.value = newName;
-              // Get new user's content - usually empty unless duplicate name used
-              getUserContent(newName, this.state.backendAddress, function(content){
-                this.setState(
-                  {
-                    'username': newName,
-                    'content': content
-                  }
-                );
-              }.bind(this));
-            })
-          }.bind(this));
+        if (newName !== null) {
+          newName = newName.trim();
+          if (newName !== null && newName !== "") {
+            // Create account then switch to that new account - if a duplicate name is entered, enter that account
+            createAccount(newName, this.state.backendAddress, function() {
+              // Update list of users
+              listUsers(this.state.backendAddress, (users) => {
+                this.setState({'users': users});
+                this.accountSelectorRef.current.value = newName;
+                // Get new user's content - usually empty unless duplicate name used
+                getUserContent(newName, this.state.backendAddress, function(content){
+                  this.setState(
+                    {
+                      'username': newName,
+                      'content': content
+                    }
+                  );
+                }.bind(this));
+              })
+            }.bind(this));
+          }
         }
       }
     } else if (option === '') {
@@ -389,7 +391,7 @@ class App extends Component {
         cols={NUM_COLS}
         gridContent={this.state.content.map((c, index) => (
           <ImageSquare
-            media={getFormattedAddress(this.state.imageHostAddress) + '/' + c.addr}
+            media={getFormattedAddress(this.state.imageHostAddress) + '/' + c.media}
             mediaType={c.mediaType}
             captioned={c.caption !== ''}
             thumbnail={getFormattedAddress(this.state.imageHostAddress) + '/' + c.thumbnail}
@@ -449,7 +451,7 @@ class App extends Component {
             this.state.editingIndex !== NONE_INDEX &&
             <EditPage
               text={this.state.content[this.state.editingIndex].caption}
-              media={getFormattedAddress(this.state.imageHostAddress) + '/' + this.state.content[this.state.editingIndex].addr}
+              media={getFormattedAddress(this.state.imageHostAddress) + '/' + this.state.content[this.state.editingIndex].media}
               mediaType={this.state.content[this.state.editingIndex].mediaType}
               closePage={() => this.setState({'editingIndex': NONE_INDEX})}
               saveCaption={(text) => this.saveCaption(text, this.state.editingIndex)}
