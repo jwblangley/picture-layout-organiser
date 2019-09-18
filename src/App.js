@@ -262,6 +262,30 @@ class App extends Component {
     );
   }
 
+  uploadProgressUpdate(progressEvent) {
+    var progressPercent = progressEvent.loaded / progressEvent.total * 100;
+    this.setState({'uploadPercent': progressPercent});
+  }
+
+  uploadCompleteCallback(res) {
+    if (!res.ok) {
+      this.reportStatusMessage("Failed to upload, please try again", false)
+    } else {
+      this.reportStatusMessage(res.text, true);
+      // Display newly uploaded content
+      getUserContent(this.state.username, this.state.backendAddress, function(content) {
+        this.setState(
+          {
+            'username': this.state.username,
+            'content': this.formatContent(content)
+          }
+        );
+      }.bind(this));
+    }
+    // Indicate to state that uploading is finished
+    this.setState({'uploading': false});
+  }
+
   handleFilesSelected(e) {
     var allowingFiles = partition(e.target.files, f => ALLOWED_MIME_TYPES.includes(f.type));
     var validFiles = allowingFiles.pass;
@@ -279,29 +303,9 @@ class App extends Component {
             this.state.username,
             this.state.backendAddress,
             // progress callback
-            function(progressEvent) {
-              var progressPercent = progressEvent.loaded / progressEvent.total * 100;
-              this.setState({'uploadPercent': progressPercent})
-            }.bind(this),
+            this.uploadProgressUpdate.bind(this),
             // callback
-            function(res) {
-              if (!res.ok) {
-                this.reportStatusMessage("Failed to upload, please try again", false)
-              } else {
-                this.reportStatusMessage(res.text, true);
-                // Display newly uploaded content
-                getUserContent(this.state.username, this.state.backendAddress, function(content) {
-                  this.setState(
-                    {
-                      'username': this.state.username,
-                      'content': this.formatContent(content)
-                    }
-                  );
-                }.bind(this));
-              }
-              // Indicate to state that uploading is finished
-              this.setState({'uploading': false});
-            }.bind(this)
+            this.uploadCompleteCallback.bind(this)
           );
         } else {
           this.setState({'uploading': true, 'uploadPercent': 0});
@@ -310,29 +314,9 @@ class App extends Component {
             this.state.username,
             this.state.backendAddress,
             // progress callback
-            function(progressEvent) {
-              var progressPercent = progressEvent.loaded / progressEvent.total * 100;
-              this.setState({'uploadPercent': progressPercent})
-            }.bind(this),
+            this.uploadProgressUpdate.bind(this),
             // callback
-            function(res) {
-              if (!res.ok) {
-                this.reportStatusMessage("Failed to upload, please try again", false)
-              } else {
-                this.reportStatusMessage(res.text, true);
-                // Display newly uploaded content
-                getUserContent(this.state.username, this.state.backendAddress, function(content){
-                  this.setState(
-                    {
-                      'username': this.state.username,
-                      'content': this.formatContent(content)
-                    }
-                  );
-                }.bind(this));
-              }
-              // Indicate to state that uploading is finished
-              this.setState({'uploading': false});
-            }.bind(this)
+            this.uploadCompleteCallback.bind(this)
           );
         }
       }
