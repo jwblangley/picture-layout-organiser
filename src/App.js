@@ -29,6 +29,7 @@ import {
 require('dotenv').config();
 
 const NUM_COLS = 3;
+const MAX_IN_GALLERY = 10;
 
 const NONE_INDEX = -1;
 
@@ -298,6 +299,10 @@ class App extends Component {
     if (this.state.username !== null && this.state.saved) {
       if (validFiles.length > 0) {
         if (this.state.galleryUpload && validFiles.length > 1) {
+          if (validFiles.length > MAX_IN_GALLERY) {
+            this.reportStatusMessage("Cannot create gallery of more than " + MAX_IN_GALLERY + " items", false);
+            return;
+          }
           uploadUserGallery(
             validFiles,
             this.state.username,
