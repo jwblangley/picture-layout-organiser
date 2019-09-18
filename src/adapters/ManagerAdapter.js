@@ -75,3 +75,17 @@ export function uploadUserMedia(files, username, backendAddress, progressCallbac
   .then(res => ({'ok': res.status === HTTP_OK, 'text': res.data}))
   .then(callback);
 }
+
+export function uploadUserGallery(files, username, backendAddress, progressCallback, callback) {
+  const query_url = getFormattedAddress(backendAddress) + '/' + username + '/addUserGallery';
+  const formData = new FormData();
+  for (var i = 0; i < files.length; i++) {
+    formData.append('file', files[i]);
+  }
+
+  axios.post(query_url, formData, {
+       onUploadProgress: progressCallback,
+     })
+  .then(res => ({'ok': res.status === HTTP_OK, 'text': res.data}))
+  .then(callback);
+}

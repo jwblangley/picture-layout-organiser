@@ -22,7 +22,8 @@ import {
   saveUserContent,
   createAccount,
   deleteAccount,
-  uploadUserMedia
+  uploadUserMedia,
+  uploadUserGallery
   } from './adapters/ManagerAdapter.js';
 
 require('dotenv').config();
@@ -108,6 +109,36 @@ class App extends Component {
     }
   }
 
+  formatContent(content) {
+    var newContent = [...content];
+
+    return newContent.map(c => {
+      var content = {...c}
+      if (content.mediaType === 'image' || content.mediaType === 'video') {
+        content.media = getFormattedAddress(this.state.imageHostAddress) + '/' + content.media;
+        if (content.mediaType === 'video') {
+          content.thumbnail = getFormattedAddress(this.state.imageHostAddress) + '/' + content.thumbnail;
+        }
+      } else if (content.mediaType === 'gallery') {
+        content.media = content.media.map(galleryItem => {
+          if (galleryItem.mediaType === 'image') {
+            return {
+              'media': getFormattedAddress(this.state.imageHostAddress) + '/' + galleryItem.media,
+              'mediaType': 'image'
+            };
+          } else if (galleryItem.mediaType === 'video') {
+            return {
+              'media': getFormattedAddress(this.state.imageHostAddress) + '/' + galleryItem.media,
+              'mediaType': 'video',
+              'thumbnail': getFormattedAddress(this.state.imageHostAddress) + '/' + galleryItem.thumbnail,
+            };
+          }
+        });
+      }
+      return content;
+    });
+  }
+
   // 2 seconds after last update (not necessarily this call), issue a save
   delayedSaveAfterLastEdit() {
     const delay = 2000;
@@ -146,7 +177,6 @@ class App extends Component {
     this.delayedSaveAfterLastEdit();
   }
 
-
   // When a different account is selcted
   // Also handle new account creation
   handleAccountSelect(option) {
@@ -170,7 +200,7 @@ class App extends Component {
                   this.setState(
                     {
                       'username': newName,
-                      'content': content
+                      'content': this.formatContent(content)
                     }
                   );
                 }.bind(this));
@@ -192,7 +222,7 @@ class App extends Component {
         this.setState(
           {
             'username': username,
-            'content': content
+            'content': this.formatContent(content)
           }
         );
       }.bind(this));
@@ -243,36 +273,68 @@ class App extends Component {
     // N.B: Content must be saved before upload
     if (this.state.username !== null && this.state.saved) {
       if (validFiles.length > 0) {
-        this.setState({'uploading': true, 'uploadPercent': 0});
-        uploadUserMedia(
-          validFiles,
-          this.state.username,
-          this.state.backendAddress,
-          // progress callback
-          function(progressEvent) {
-            var progressPercent = progressEvent.loaded / progressEvent.total * 100;
-            this.setState({'uploadPercent': progressPercent})
-          }.bind(this),
-          // callback
-          function(res) {
-            if (!res.ok) {
-              this.reportStatusMessage("Failed to upload, please try again", false)
-            } else {
-              this.reportStatusMessage(res.text, true);
-              // Display newly uploaded content
-              getUserContent(this.state.username, this.state.backendAddress, function(content){
-                this.setState(
-                  {
-                    'username': this.state.username,
-                    'content': content
-                  }
-                );
-              }.bind(this));
-            }
-            // Indicate to state that uploading is finished
-            this.setState({'uploading': false});
-          }.bind(this)
-        );
+        if (this.state.galleryUpload && validFiles.length > 1) {
+          uploadUserGallery(
+            validFiles,
+            this.state.username,
+            this.state.backendAddress,
+            // progress callback
+            function(progressEvent) {
+              var progressPercent = progressEvent.loaded / progressEvent.total * 100;
+              this.setState({'uploadPercent': progressPercent})
+            }.bind(this),
+            // callback
+            function(res) {
+              if (!res.ok) {
+                this.reportStatusMessage("Failed to upload, please try again", false)
+              } else {
+                this.reportStatusMessage(res.text, true);
+                // Display newly uploaded content
+                getUserContent(this.state.username, this.state.backendAddress, function(content) {
+                  this.setState(
+                    {
+                      'username': this.state.username,
+                      'content': this.formatContent(content)
+                    }
+                  );
+                }.bind(this));
+              }
+              // Indicate to state that uploading is finished
+              this.setState({'uploading': false});
+            }.bind(this)
+          );
+        } else {
+          this.setState({'uploading': true, 'uploadPercent': 0});
+          uploadUserMedia(
+            validFiles,
+            this.state.username,
+            this.state.backendAddress,
+            // progress callback
+            function(progressEvent) {
+              var progressPercent = progressEvent.loaded / progressEvent.total * 100;
+              this.setState({'uploadPercent': progressPercent})
+            }.bind(this),
+            // callback
+            function(res) {
+              if (!res.ok) {
+                this.reportStatusMessage("Failed to upload, please try again", false)
+              } else {
+                this.reportStatusMessage(res.text, true);
+                // Display newly uploaded content
+                getUserContent(this.state.username, this.state.backendAddress, function(content){
+                  this.setState(
+                    {
+                      'username': this.state.username,
+                      'content': this.formatContent(content)
+                    }
+                  );
+                }.bind(this));
+              }
+              // Indicate to state that uploading is finished
+              this.setState({'uploading': false});
+            }.bind(this)
+          );
+        }
       }
     } else {
       // Should never be reached as inputs are disabled in this case
@@ -403,10 +465,10 @@ class App extends Component {
         cols={NUM_COLS}
         gridContent={this.state.content.map((c, index) => (
           <ImageSquare
-            media={getFormattedAddress(this.state.imageHostAddress) + '/' + c.media}
+            media={c.media}
             mediaType={c.mediaType}
             captioned={c.caption !== ''}
-            thumbnail={getFormattedAddress(this.state.imageHostAddress) + '/' + c.thumbnail}
+            thumbnail={c.thumbnail}
             selected={this.state.selectedIndex === index}
             locked={c.locked}
             toggleLock={function(e) {
@@ -463,7 +525,7 @@ class App extends Component {
             this.state.editingIndex !== NONE_INDEX &&
             <EditPage
               text={this.state.content[this.state.editingIndex].caption}
-              media={getFormattedAddress(this.state.imageHostAddress) + '/' + this.state.content[this.state.editingIndex].media}
+              media={this.state.content[this.state.editingIndex].media}
               mediaType={this.state.content[this.state.editingIndex].mediaType}
               closePage={() => this.setState({'editingIndex': NONE_INDEX})}
               saveCaption={(text) => this.saveCaption(text, this.state.editingIndex)}

@@ -6,15 +6,28 @@ import padlock from '../../images/padlock.svg';
 import pencil from '../../images/pencil.svg';
 import captioned from '../../images/captioned.svg';
 import videoIcon from '../../images/video.svg';
+import galleryIcon from '../../images/gallery.svg';
 
 class ImageSquare extends Component {
 
   render() {
-    var backgroundImageStyle;
 
+    // Decide backround image for ImageSquare
+    var backgroundImageStyle;
     if (this.props.mediaType === 'video'){
       backgroundImageStyle = {
         'backgroundImage': 'url(' + this.props.thumbnail + ')'
+      }
+    } else if (this.props.mediaType === 'gallery') {
+      var galleryHead = this.props.media[0];
+      if (galleryHead.mediaType === 'image' ) {
+        backgroundImageStyle = {
+          'backgroundImage': 'url(' + galleryHead.media + ')'
+        }
+      } else if (galleryHead.mediaType === 'video') {
+        backgroundImageStyle = {
+          'backgroundImage': 'url(' + galleryHead.thumbnail + ')'
+        }
       }
     } else {
       // Standard image
@@ -51,7 +64,7 @@ class ImageSquare extends Component {
         }
         {this.props.mediaType !== 'image' && !this.props.locked &&
           (<img
-            src={this.props.mediaType === 'video' ? videoIcon: null}
+            src={this.props.mediaType === 'video' ? videoIcon: galleryIcon}
             className='media-type-icon icon'
           />)
         }
