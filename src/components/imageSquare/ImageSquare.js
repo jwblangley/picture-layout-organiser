@@ -10,31 +10,26 @@ import galleryIcon from '../../images/gallery.svg';
 
 class ImageSquare extends Component {
 
-  render() {
-
+  generateBackgroundImageStyle(media, mediaType, thumbnail) {
     // Decide backround image for ImageSquare
-    var backgroundImageStyle;
-    if (this.props.mediaType === 'video'){
-      backgroundImageStyle = {
-        'backgroundImage': 'url(' + this.props.thumbnail + ')'
+    if (mediaType === 'video'){
+      return {
+        'backgroundImage': 'url(' + thumbnail + ')'
       }
-    } else if (this.props.mediaType === 'gallery') {
-      var galleryHead = this.props.media[0];
-      if (galleryHead.mediaType === 'image' ) {
-        backgroundImageStyle = {
-          'backgroundImage': 'url(' + galleryHead.media + ')'
-        }
-      } else if (galleryHead.mediaType === 'video') {
-        backgroundImageStyle = {
-          'backgroundImage': 'url(' + galleryHead.thumbnail + ')'
-        }
-      }
+    } else if (mediaType === 'gallery') {
+      var galleryHead = media[0];
+      return this.generateBackgroundImageStyle(galleryHead.media, galleryHead.mediaType, galleryHead.thumbnail);
     } else {
       // Standard image
-      backgroundImageStyle = {
-        'backgroundImage': 'url(' + this.props.media + ')'
+      return {
+        'backgroundImage': 'url(' + media + ')'
       }
     }
+  }
+
+  render() {
+
+    var backgroundImageStyle = this.generateBackgroundImageStyle(this.props.media, this.props.mediaType, this.props.thumbnail);
 
     var classString = 'image-square' + (this.props.selected ? ' selected' : '');
 
