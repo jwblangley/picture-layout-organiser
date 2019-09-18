@@ -61,6 +61,11 @@
   margin-top: 1vmin;
 }
 
+.gallery-item-wrapper button {
+  display: block;
+  margin: auto;
+}
+
 @media screen and (max-aspect-ratio: 7/10) {
   .edit-page {
     height: 80vh;

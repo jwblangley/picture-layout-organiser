@@ -557,6 +557,26 @@ class App extends Component {
                   this.setState({'editingIndex': NONE_INDEX});
                 }
               }.bind(this)}
+              setGalleryItemAsGalleryHead={function(itemIndex) {
+                // Get old items
+                var content = [...this.state.content];
+                var selectedGallery = content[this.state.editingIndex];
+                var galleryMedia = selectedGallery.media;
+                var toHead = galleryMedia[itemIndex];
+
+                // Delete 1 item at index, itemIndex - remove item from original place in list
+                galleryMedia.splice(itemIndex, 1);
+                // Move item to head of list
+                galleryMedia = [toHead, ...galleryMedia];
+
+                // Build new items
+                selectedGallery.media = galleryMedia
+                content[this.state.editingIndex] = selectedGallery;
+
+                // Set state and save
+                this.setState({'content': content});
+                this.delayedSaveAfterLastEdit();
+              }.bind(this)}
             />
           }
 

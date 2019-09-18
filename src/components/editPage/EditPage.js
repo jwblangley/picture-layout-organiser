@@ -9,6 +9,8 @@ import binImage from '../../images/bin.svg'
 
 class EditPage extends Component {
 
+  // TODO: Implement ability to set gallery head
+
   constructor(props) {
     super(props);
     this.state = {
@@ -28,7 +30,12 @@ class EditPage extends Component {
       return (
         <Carousel
           stringIfEmpty="Empty Gallery"
-          slides={media.map(galleryItem => this.generateMediaPreview(galleryItem.media, galleryItem.mediaType))}
+          slides={media.map((galleryItem, index) => {
+            var mediaPreview = this.generateMediaPreview(galleryItem.media, galleryItem.mediaType)
+            return this.generateGalleryItemWrapper(mediaPreview, index);
+            }
+          )}
+
         />
       );
     } else {
@@ -43,6 +50,24 @@ class EditPage extends Component {
         ></div>
       );
     }
+  }
+
+  generateGalleryItemWrapper(itemPreview, itemIndex) {
+    return (
+      <div className='gallery-item-wrapper'>
+        {itemPreview}
+        {
+          itemIndex > 0 &&
+          (
+            <button
+              onClick={() => this.props.setGalleryItemAsGalleryHead(itemIndex)}
+            >
+              Make first
+            </button>
+          )
+        }
+      </div>
+    );
   }
 
   render() {
