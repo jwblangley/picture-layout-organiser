@@ -576,6 +576,9 @@ class App extends Component {
                 // Set state and save
                 this.setState({'content': content});
                 this.delayedSaveAfterLastEdit();
+
+                // Scroll to gallery head
+                document.getElementById("gallery-preview-head").scrollIntoView();
               }.bind(this)}
             />
           }

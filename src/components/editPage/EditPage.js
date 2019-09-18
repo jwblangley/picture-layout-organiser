@@ -55,6 +55,12 @@ class EditPage extends Component {
   generateGalleryItemWrapper(itemPreview, itemIndex) {
     return (
       <div className='gallery-item-wrapper'>
+        {
+          itemIndex === 0 &&
+          (
+            <a id='gallery-preview-head' />
+          )
+        }
         {itemPreview}
         {
           itemIndex > 0 &&
