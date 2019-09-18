@@ -91,6 +91,8 @@ class App extends Component {
     }
     const indexChangeMap = new Map([[LEFT_KEY, -1], [UP_KEY, -1 * NUM_COLS], [RIGHT_KEY, 1], [DOWN_KEY, NUM_COLS]]);
     if (this.state.selectedIndex !== NONE_INDEX && indexChangeMap.has(e.keyCode)) {
+      // Prevent arrow key scrolling
+      e.preventDefault();
 
       var selectedIndex = this.state.selectedIndex;
       var swapToIndex = this.state.selectedIndex + indexChangeMap.get(e.keyCode);
@@ -106,6 +108,13 @@ class App extends Component {
           console.log(err);
         }
         this.delayedSaveAfterLastEdit();
+
+        // Scroll to moved selected item location
+        const selectedItemAnchor = document.getElementById('current-selected-item');
+        const anchorRect = selectedItemAnchor.getBoundingClientRect();
+        const absoluteAnchorTop = anchorRect.top + window.pageYOffset;
+        const middleScrollPoint = absoluteAnchorTop - (window.innerHeight / 2);
+        window.scrollTo(0, middleScrollPoint);
       }
     }
   }

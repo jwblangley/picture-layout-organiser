@@ -39,6 +39,12 @@ class ImageSquare extends Component {
         style={backgroundImageStyle}
         onClick={this.props.handleClick}
         >
+        {
+          this.props.selected &&
+          (
+            <a id='current-selected-item' />
+          )
+        }
         <img
           src={this.props.locked ? padlock : ringCircle}
           className='lock-ring clickable icon'
