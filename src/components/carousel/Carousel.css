@@ -1,0 +1,18 @@
+.carousel {
+  overflow-x: scroll;
+  white-space: nowrap;
+  align-items: flex-start;
+  display: flex;
+}
+
+.carousel-slide {
+  display: inline-block;
+  margin: 0 1vmin;
+}
+
+.warning-message {
+  color: var(--warning);
+  text-align: center;
+  width: 100%;
+  height: 100%;
+}
