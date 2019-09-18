@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 
 import './EditPage.css';
 
+import Carousel from '../carousel/Carousel.js';
+
 import crossImage from '../../images/cross.svg'
 import binImage from '../../images/bin.svg'
 
@@ -14,29 +16,36 @@ class EditPage extends Component {
     }
   }
 
-  render() {
-
-    var mediaPreview;
-    if (this.props.mediaType === 'video') {
-      mediaPreview = (
+  generateMediaPreview(media, mediaType) {
+    if (mediaType === 'video') {
+      return (
         <video className="video-preview" controls>
-          <source src={this.props.media} type="video/mp4" />
+          <source src={media} type="video/mp4" />
           Your browser does not support the video tag.
         </video>
+      );
+    } else if (mediaType === 'gallery') {
+      return (
+        <Carousel
+          stringIfEmpty="Empty Gallery"
+          slides={media.map(galleryItem => this.generateMediaPreview(galleryItem.media, galleryItem.mediaType))}
+        />
       );
     } else {
       // Standard image
       var backgroundImageStyle = {
-        'backgroundImage': 'url(' + this.props.media + ')'
+        'backgroundImage': 'url(' + media + ')'
       }
-      mediaPreview = (
+      return (
         <div
           style={backgroundImageStyle}
           className='image-preview'
         ></div>
       );
     }
+  }
 
+  render() {
 
     return (
       <div className='edit-page'>
@@ -45,7 +54,7 @@ class EditPage extends Component {
           className='exit-icon'
           onClick={() => this.props.closePage()}
         />
-        {mediaPreview}
+        {this.generateMediaPreview(this.props.media, this.props.mediaType)}
         <img
           src={binImage}
           className='media-delete-icon'
