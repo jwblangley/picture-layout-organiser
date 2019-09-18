@@ -112,31 +112,63 @@ class App extends Component {
 
   formatContent(content) {
     var newContent = [...content];
+    var imageHostPrefix = getFormattedAddress(this.state.imageHostAddress) + '/';
 
     return newContent.map(c => {
-      var content = {...c}
-      if (content.mediaType === 'image' || content.mediaType === 'video') {
-        content.media = getFormattedAddress(this.state.imageHostAddress) + '/' + content.media;
-        if (content.mediaType === 'video') {
-          content.thumbnail = getFormattedAddress(this.state.imageHostAddress) + '/' + content.thumbnail;
+      var contentItem = {...c}
+      if (contentItem.mediaType === 'image' || contentItem.mediaType === 'video') {
+        contentItem.media = imageHostPrefix + contentItem.media;
+        if (contentItem.mediaType === 'video') {
+          contentItem.thumbnail = imageHostPrefix + contentItem.thumbnail;
         }
-      } else if (content.mediaType === 'gallery') {
-        content.media = content.media.map(galleryItem => {
+      } else if (contentItem.mediaType === 'gallery') {
+        contentItem.media = contentItem.media.map(galleryItem => {
           if (galleryItem.mediaType === 'image') {
             return {
-              'media': getFormattedAddress(this.state.imageHostAddress) + '/' + galleryItem.media,
+              'media': imageHostPrefix + galleryItem.media,
               'mediaType': 'image'
             };
           } else if (galleryItem.mediaType === 'video') {
             return {
-              'media': getFormattedAddress(this.state.imageHostAddress) + '/' + galleryItem.media,
+              'media': imageHostPrefix + galleryItem.media,
               'mediaType': 'video',
-              'thumbnail': getFormattedAddress(this.state.imageHostAddress) + '/' + galleryItem.thumbnail,
+              'thumbnail': imageHostPrefix + galleryItem.thumbnail,
             };
           }
         });
       }
-      return content;
+      return contentItem;
+    });
+  }
+
+  stripContentFormat(formattedContent) {
+    var newContent = [...formattedContent];
+    var imageHostPrefix = getFormattedAddress(this.state.imageHostAddress) + '/';
+
+    return newContent.map(c => {
+      var contentItem = {...c}
+      if (contentItem.mediaType === 'image' || contentItem.mediaType === 'video') {
+        contentItem.media = contentItem.media.replace(imageHostPrefix, '');
+        if (contentItem.mediaType === 'video') {
+          contentItem.thumbnail = contentItem.thumbnail.replace(imageHostPrefix, '');
+        }
+      } else if (contentItem.mediaType === 'gallery') {
+        contentItem.media = contentItem.media.map(galleryItem => {
+          if (galleryItem.mediaType === 'image') {
+            return {
+              'media': galleryItem.media.replace(imageHostPrefix, ''),
+              'mediaType': 'image'
+            };
+          } else if (galleryItem.mediaType === 'video') {
+            return {
+              'media': galleryItem.media.replace(imageHostPrefix, ''),
+              'mediaType': 'video',
+              'thumbnail': galleryItem.thumbnail.replace(imageHostPrefix, ''),
+            };
+          }
+        });
+      }
+      return contentItem;
     });
   }
 
@@ -146,7 +178,8 @@ class App extends Component {
     lastUpdate = Date.now();
     setTimeout(function(){
       if (Date.now() - lastUpdate > delay - 100) {
-        saveUserContent(this.state.username, this.state.content, this.state.backendAddress, function(){
+        var strippedContent = this.stripContentFormat(this.state.content)
+        saveUserContent(this.state.username, strippedContent, this.state.backendAddress, function(){
           this.setState({'saved':true});
         }.bind(this));
       }
