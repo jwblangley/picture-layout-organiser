@@ -287,6 +287,7 @@ class App extends Component {
     } else if (contentToSave.mediaType === 'gallery') {
       contentToSave.media.forEach(galleryItem => downloadUrl(galleryItem.media));
     }
+    this.reportStatusMessage("Downloaded item and copied caption to clipboard", true);
   }
 
   // When a different account is selcted
