@@ -34,6 +34,17 @@
   border-bottom: solid 0.1vmin black;
 }
 
+.download-button {
+  padding: 2vmin;
+  text-align: center;
+  border-bottom: solid 0.1vmin black;
+}
+
+.status-message-container {
+  border-bottom: solid 0.1vmin black;
+  padding: 1vmin;
+}
+
 #upload-button {
   margin-right: 2vmin;
   vertical-align: middle;

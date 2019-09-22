@@ -528,21 +528,6 @@ class App extends Component {
               }.bind(this)}
             />
           </span>
-
-          <button
-            disabled={this.state.uploading || this.state.editingIndex !== NONE_INDEX || this.state.username === null || this.state.backendAddress === null }
-            onClick={function() {
-              var toDownloadIndex = this.state.selectedIndex === NONE_INDEX ? this.getNextDownloadIndex() : this.state.selectedIndex;
-              if (toDownloadIndex === -1) {
-                this.reportStatusMessage("No next item available", false);
-                return;
-              }
-              this.saveContentItemToDevice(toDownloadIndex);
-            }.bind(this)}
-          >
-            {this.state.selectedIndex === NONE_INDEX ? 'Download latest' : ' Download selected'}
-          </button>
-
         </div>
         <div className='upload-status-bar'>
           <ToggleSwitch
@@ -554,13 +539,30 @@ class App extends Component {
           <div className="progress-bar-container">
             <Progress max="100" color="success" striped value={this.state.uploadPercent}>{Math.round(this.state.uploadPercent, 2)}%</Progress>
           </div>
+        </div>
+        <div className='download-button'>
+          <button
+          disabled={this.state.uploading || this.state.editingIndex !== NONE_INDEX || this.state.username === null || this.state.backendAddress === null }
+          onClick={function() {
+            var toDownloadIndex = this.state.selectedIndex === NONE_INDEX ? this.getNextDownloadIndex() : this.state.selectedIndex;
+            if (toDownloadIndex === -1) {
+              this.reportStatusMessage("No next item available", false);
+              return;
+            }
+            this.saveContentItemToDevice(toDownloadIndex);
+          }.bind(this)}
+          >
+            {this.state.selectedIndex === NONE_INDEX ? 'Download latest' : ' Download selected'}
+          </button>
+        </div>
+        <div className='status-message-container'>
           {this.state.statusMessages.map((message, index) =>
             <StatusMessage
-              text={message.text}
-              positive={message.positive}
-              handleDismiss={function(){
-                this.setState({'statusMessages': this.state.statusMessages.filter((m, i) => i !== index)});
-              }.bind(this)}
+            text={message.text}
+            positive={message.positive}
+            handleDismiss={function(){
+              this.setState({'statusMessages': this.state.statusMessages.filter((m, i) => i !== index)});
+            }.bind(this)}
             />
           )}
         </div>
