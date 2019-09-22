@@ -38,11 +38,13 @@
   padding: 2vmin;
   text-align: center;
   border-bottom: solid 0.1vmin black;
+  background-color: white;
 }
 
 .status-message-container {
   border-bottom: solid 0.1vmin black;
   padding: 1vmin;
+  background-color: white;
 }
 
 #upload-button {
