@@ -4,17 +4,6 @@ import axios from 'axios';
 
 const HTTP_OK = 200;
 
-function createPostParams(jsonData) {
-  const params = {
-    method: 'POST',
-    body: JSON.stringify(jsonData),
-    headers: {
-      'Content-Type':'application/json',
-    }
-  };
-  return params;
-}
-
 export function getFormattedAddress(backendAddress) {
   if (!backendAddress.toLowerCase().startsWith('http://')
     && !backendAddress.toLowerCase().startsWith('https://')) {
@@ -43,23 +32,26 @@ export function getUserContent(username, backendAddress, callback) {
 
 export function saveUserContent(username, content, backendAddress, callback) {
   const query_url = getFormattedAddress(backendAddress) + '/' + username + '/saveUserContent';
-  var postParams = createPostParams({'content': content});
-  fetch(query_url, postParams)
-    .then(callback);
+  axios.post(query_url, {
+    'content': content
+  })
+  .then(callback);
 }
 
 export function createAccount(newName, backendAddress, callback) {
   const query_url = getFormattedAddress(backendAddress) + '/createAccount';
-  const postParams = createPostParams({'name': newName});
-  fetch(query_url, postParams)
-    .then(callback);
+  axios.post(query_url, {
+    'name': newName
+  })
+  .then(callback);
 }
 
 export function deleteAccount(username, backendAddress, callback) {
   const query_url = getFormattedAddress(backendAddress) + '/deleteAccount';
-  const postParams = createPostParams({'name': username});
-  fetch(query_url, postParams)
-    .then(callback);
+  axios.post(query_url, {
+    'name': username
+  })
+  .then(callback);
 }
 
 export function uploadUserMedia(files, username, backendAddress, progressCallback, callback) {
