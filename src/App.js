@@ -246,6 +246,10 @@ class App extends Component {
 
   // Set all content items at and above the given index to locked
   lockContentAfterIndex(lockIndex) {
+    if (lockIndex === this.getNextDownloadIndex() + 1) {
+      // Lock on furtherst locked item toggles that specific lock
+      lockIndex++;
+    }
     var updatedContent = [...this.state.content];
     updatedContent = updatedContent.map((item, itemIndex) => {
       var newItem = {...item};
