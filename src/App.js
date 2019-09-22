@@ -275,7 +275,7 @@ class App extends Component {
     return minLocked - 1;
   }
 
-  saveContentItemToDevice(index) {
+  saveContentItemToDevice(index, andLock) {
     var contentToSave = this.state.content[index];
     // Copy caption to clipboard
     var caption = contentToSave.caption;
@@ -286,6 +286,10 @@ class App extends Component {
       downloadUrl(contentToSave.media);
     } else if (contentToSave.mediaType === 'gallery') {
       contentToSave.media.forEach(galleryItem => downloadUrl(galleryItem.media));
+    }
+    if (andLock) {
+      // For normal 'next' usage, lock item
+      this.lockContentAfterIndex(index);
     }
     this.reportStatusMessage("Downloaded item and copied caption to clipboard", true);
   }
@@ -554,10 +558,10 @@ class App extends Component {
               this.reportStatusMessage("No next item available", false);
               return;
             }
-            this.saveContentItemToDevice(toDownloadIndex);
+            this.saveContentItemToDevice(toDownloadIndex, this.state.selectedIndex === NONE_INDEX);
           }.bind(this)}
           >
-            {this.state.selectedIndex === NONE_INDEX ? 'Download latest' : ' Download selected'}
+            {this.state.selectedIndex === NONE_INDEX ? 'Download latest and lock' : ' Download selected'}
           </button>
         </div>
         <div className='status-message-container'>
