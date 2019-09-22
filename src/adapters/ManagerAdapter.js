@@ -1,7 +1,5 @@
 import axios from 'axios';
 
-// TODO: Switch all to use axios?
-
 const HTTP_OK = 200;
 
 export function getFormattedAddress(backendAddress) {
@@ -17,16 +15,15 @@ export function getFormattedAddress(backendAddress) {
 
 export function listUsers(backendAddress, callback) {
   const query_url = getFormattedAddress(backendAddress) + '/listUsers';
-
-  fetch(query_url)
-  .then(res => res.json())
+  axios.get(query_url)
+  .then(res => res.data)
   .then(callback);
 }
 
 export function getUserContent(username, backendAddress, callback) {
   const query_url = getFormattedAddress(backendAddress) + '/' + username + '/getUserContent';
-  fetch(query_url)
-  .then(res => res.json())
+  axios.get(query_url)
+  .then(res => res.data)
   .then(callback);
 }
 
