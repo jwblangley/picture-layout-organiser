@@ -14,7 +14,6 @@ import ToggleSwitch from './components/toggleSwitch/ToggleSwitch.js';
 import arraySwap from './ArraySwap.js';
 import partition from './Partition.js';
 
-import plusIcon from './images/plus.svg';
 import binIcon from './images/bin.svg';
 
 import {
@@ -181,6 +180,7 @@ class App extends Component {
               'thumbnail': imageHostPrefix + galleryItem.thumbnail,
             };
           }
+          throw new Error("Unknown media type");
         });
       }
       return contentItem;
@@ -212,6 +212,7 @@ class App extends Component {
               'thumbnail': galleryItem.thumbnail.replace(imageHostPrefix, ''),
             };
           }
+          throw new Error("Unknown media type");
         });
       }
       return contentItem;
@@ -286,7 +287,10 @@ class App extends Component {
       downloadUrl(contentToSave.media);
     } else if (contentToSave.mediaType === 'gallery') {
       contentToSave.media.forEach(galleryItem => downloadUrl(galleryItem.media));
+    } else {
+      throw new Error("Unknown media type");
     }
+
     if (andLock) {
       // For normal 'next' usage, lock item
       this.lockContentAfterIndex(index);
@@ -522,6 +526,7 @@ class App extends Component {
             <img
               id='account-delete-icon'
               src={binIcon}
+              alt='delete account'
               onClick={function() {
                 if (this.state.backendAddress !== null && this.state.username !== null && !this.state.uploading && this.state.editingIndex === NONE_INDEX) {
                   if (window.confirm("Are you sure you want to delete \"" + this.state.username + "\" from the organiser")) {
@@ -567,11 +572,12 @@ class App extends Component {
         <div className='status-message-container'>
           {this.state.statusMessages.map((message, index) =>
             <StatusMessage
-            text={message.text}
-            positive={message.positive}
-            handleDismiss={function(){
-              this.setState({'statusMessages': this.state.statusMessages.filter((m, i) => i !== index)});
-            }.bind(this)}
+              key={index}
+              text={message.text}
+              positive={message.positive}
+              handleDismiss={function(){
+                this.setState({'statusMessages': this.state.statusMessages.filter((m, i) => i !== index)});
+              }.bind(this)}
             />
           )}
         </div>

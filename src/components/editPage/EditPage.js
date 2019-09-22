@@ -38,7 +38,7 @@ class EditPage extends Component {
 
         />
       );
-    } else {
+    } else if (mediaType === 'image') {
       // Standard image
       var backgroundImageStyle = {
         'backgroundImage': 'url(' + media + ')'
@@ -50,6 +50,7 @@ class EditPage extends Component {
         ></div>
       );
     }
+    throw new Error("Unknown media type");
   }
 
   generateGalleryItemWrapper(itemPreview, itemIndex) {
@@ -82,12 +83,14 @@ class EditPage extends Component {
       <div className='edit-page'>
         <img
           src={crossImage}
+          alt='close'
           className='exit-icon'
           onClick={() => this.props.closePage()}
         />
         {this.generateMediaPreview(this.props.media, this.props.mediaType)}
         <img
           src={binImage}
+          alt='delete item'
           className='media-delete-icon'
           onClick={this.props.deleteImage}
         />

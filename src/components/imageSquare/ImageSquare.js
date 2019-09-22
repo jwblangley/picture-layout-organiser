@@ -19,12 +19,13 @@ class ImageSquare extends Component {
     } else if (mediaType === 'gallery') {
       var galleryHead = media[0];
       return this.generateBackgroundImageStyle(galleryHead.media, galleryHead.mediaType, galleryHead.thumbnail);
-    } else {
+    } else if (mediaType === 'image') {
       // Standard image
       return {
         'backgroundImage': 'url(' + media + ')'
       }
     }
+    throw new Error("Unknown media type");
   }
 
   render() {
@@ -47,12 +48,14 @@ class ImageSquare extends Component {
         }
         <img
           src={this.props.locked ? padlock : ringCircle}
+          alt={this.props.locked ? 'locked': 'unlocked'}
           className='lock-ring clickable icon'
           onClick={this.props.toggleLock}
         />
         {this.props.locked ? null :
           (<img
             src={pencil}
+            alt='edit'
             className='edit-icon clickable icon'
             onClick={this.props.handleEditClick}
           />)
@@ -60,12 +63,14 @@ class ImageSquare extends Component {
         {this.props.captioned && !this.props.locked &&
           (<img
             src={captioned}
+            alt='captioned'
             className='captioned-icon icon'
           />)
         }
         {this.props.mediaType !== 'image' && !this.props.locked &&
           (<img
             src={this.props.mediaType === 'video' ? videoIcon: galleryIcon}
+            alt={this.props.mediaType}
             className='media-type-icon icon'
           />)
         }

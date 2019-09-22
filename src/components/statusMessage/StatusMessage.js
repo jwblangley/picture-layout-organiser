@@ -10,7 +10,7 @@ class StatusMessage extends Component {
     return (
       <div className={'status-message ' + (this.props.positive ? 'positive': 'negative')}>
         {this.props.text}
-        <img className='dismiss-icon' src={crossImage} onClick={this.props.handleDismiss} />
+        <img className='dismiss-icon' alt='dismiss' src={crossImage} onClick={this.props.handleDismiss} />
       </div>
     );
   }
