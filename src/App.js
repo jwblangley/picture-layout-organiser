@@ -1,4 +1,6 @@
 import React, {Component} from 'react';
+import axios from 'axios';
+
 import './App.css';
 
 import {Progress} from 'reactstrap';
@@ -48,6 +50,41 @@ function getBackendPorts() {
   return ({
     'backend': parseInt(process.env.REACT_APP_BACKEND_PORT_BASE),
     'imageHost': parseInt(process.env.REACT_APP_BACKEND_PORT_BASE) + 1
+  });
+}
+
+function copyToClipBoard(text) {
+  // Add a new <input> element to body temporarily
+  var body = document.getElementsByTagName('body')[0];
+  var tempInput = document.createElement('INPUT');
+  body.appendChild(tempInput);
+  // Copy text into that element
+  tempInput.setAttribute('value', text);
+  // Select the text
+  tempInput.select();
+  tempInput.setSelectionRange(0, 99999); /*For mobile devices*/
+  // Run the copy command
+  document.execCommand('copy');
+  // Remove the temporary element
+  body.removeChild(tempInput);
+}
+
+function downloadUrl(url) {
+  // Remove path (url) to file
+  var fileName = url.substring(url.lastIndexOf('/') + 1);
+
+  // Download url as blob to then download straight to device (not new tab)
+  // N.B: CORS must be enabled on requested files
+  axios({
+    'url': url,
+    'method': 'GET',
+    'responseType': 'blob',
+  }).then((response) => {
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', fileName);
+    link.click();
   });
 }
 
@@ -218,6 +255,34 @@ class App extends Component {
     this.deselectSelectedItem();
     this.setState({'content': updatedContent, 'saved': false});
     this.delayedSaveAfterLastEdit();
+  }
+
+  // Returns -1 when there is no next item
+  getNextDownloadIndex() {
+    var lockedIndexes = this.state.content
+      .map((c, index) => ({'index': index, 'locked':c.locked}))
+      .filter(c => c.locked)
+      .map(c => c.index);
+    if (lockedIndexes.length === 0) {
+      // None locked: return end
+      return this.state.content.length - 1;
+    }
+    var minLocked = Math.min(...lockedIndexes);
+    return minLocked - 1;
+  }
+
+  saveContentItemToDevice(index) {
+    var contentToSave = this.state.content[index];
+    // Copy caption to clipboard
+    var caption = contentToSave.caption;
+    copyToClipBoard(caption);
+
+    // Download file(s) of content
+    if (contentToSave.mediaType === 'image' || contentToSave.mediaType === 'video') {
+      downloadUrl(contentToSave.media);
+    } else if (contentToSave.mediaType === 'gallery') {
+      contentToSave.media.forEach(galleryItem => downloadUrl(galleryItem.media));
+    }
   }
 
   // When a different account is selcted
@@ -463,6 +528,21 @@ class App extends Component {
               }.bind(this)}
             />
           </span>
+
+          <button
+            disabled={this.state.uploading || this.state.editingIndex !== NONE_INDEX || this.state.username === null || this.state.backendAddress === null }
+            onClick={function() {
+              var toDownloadIndex = this.state.selectedIndex === NONE_INDEX ? this.getNextDownloadIndex() : this.state.selectedIndex;
+              if (toDownloadIndex === -1) {
+                this.reportStatusMessage("No next item available", false);
+                return;
+              }
+              this.saveContentItemToDevice(toDownloadIndex);
+            }.bind(this)}
+          >
+            {this.state.selectedIndex === NONE_INDEX ? 'Download latest' : ' Download selected'}
+          </button>
+
         </div>
         <div className='upload-status-bar'>
           <ToggleSwitch
@@ -591,7 +671,6 @@ class App extends Component {
               }.bind(this)}
             />
           }
-
         </div>
       </div>
     );
