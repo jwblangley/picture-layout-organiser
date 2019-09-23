@@ -294,8 +294,10 @@ class App extends Component {
     if (andLock) {
       // For normal 'next' usage, lock item
       this.lockContentAfterIndex(index);
+      this.reportStatusMessage("Downloaded item, copied caption to clipboard and locked item", true);
+    } else {
+      this.reportStatusMessage("Downloaded item and copied caption to clipboard", true);
     }
-    this.reportStatusMessage("Downloaded item and copied caption to clipboard", true);
   }
 
   // When a different account is selcted
