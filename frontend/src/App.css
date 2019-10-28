@@ -1,0 +1,91 @@
+#main-grid {
+  display: table;
+  margin: auto;
+  text-align: center;
+}
+
+#main-grid h2 {
+  font-size: 1rem;
+}
+
+.empty-content {
+  margin: auto;
+  text-align: center;
+}
+
+.top-bar {
+  width:100%;
+  position: -webkit-sticky; /* Compatibility */
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.admin-bar {
+  background-color: var(--color-gray-light);
+  padding: 2vmin;
+}
+
+.upload-status-bar {
+  text-align: center;
+  background-color: white;
+  width:100%;
+  padding: 2vmin;
+  border-bottom: solid 0.1vmin black;
+}
+
+.download-button {
+  padding: 2vmin;
+  text-align: center;
+  border-bottom: solid 0.1vmin black;
+  background-color: white;
+}
+
+.status-message-container {
+  border-bottom: solid 0.1vmin black;
+  padding: 1vmin;
+  background-color: white;
+}
+
+#upload-button {
+  margin-right: 2vmin;
+  vertical-align: middle;
+}
+
+.progress-bar-container {
+  display: inline-block;
+  width: 75vw;
+}
+
+.page-content {
+  margin-top: 2vmin;
+}
+
+.backend-address-input {
+  float: right;
+}
+
+@media screen and (max-aspect-ratio: 9/10) {
+  .backend-address-input {
+    float: none;
+    display: block;
+    margin-bottom: 1vmin;
+  }
+}
+
+.backend-address-input input {
+  outline: none;
+  padding: 0.5vmin;
+}
+
+.account-select select {
+  outline: none;
+  padding: 0.5vmin;
+  background-color: white;
+}
+
+#account-delete-icon {
+  width: 1.5rem;
+  cursor: pointer;
+  margin:0.5vmin;
+}
