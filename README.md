@@ -5,7 +5,7 @@ Edit the file `backend/.config/directory.txt` to change working directory locati
 If required edit the port number in `run.sh`. This should match the port number needed entered in the front end config.
 
 <hr>
-Require `ffmpeg` to be installed.
+Requires `ffmpeg` to be installed.
 <hr>
 
 Run `npm start` to start the server
