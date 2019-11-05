@@ -14,4 +14,4 @@ const StatusMessage = ({text, positive, handleDismiss}) => {
   )
 }
 
-export default StatusMessage;
+export default StatusMessage

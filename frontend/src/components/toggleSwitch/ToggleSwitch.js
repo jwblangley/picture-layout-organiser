@@ -1,40 +1,33 @@
-import React, {Component} from 'react';
+import React, {useState} from 'react';
 
 import './ToggleSwitch.css';
 
-class ToggleSwitch extends Component {
+const ToggleSwitch = ({text, initial, disabled, onChange}) => {
 
-  constructor(props) {
-  super(props);
-    this.state = {
-      'checked': props.initial
-    };
-  }
+  const [checked, setChecked] = useState(initial)
 
-  handleChange(e) {
-    if (!this.props.disabled) {
-      this.setState({'checked': e.target.checked});
-      this.props.onChange(e.target.checked);
+  function handleChange(e) {
+    if (!disabled) {
+      setChecked(e.target.checked)
+      onChange(e.target.checked);
     }
   }
 
-  render() {
-    // Use label to pass click to inner input tag
-    return (
-      <label>
-        {this.props.text}
-        <input
-          className="checkbox"
-          type="checkbox"
-          checked={this.state.checked}
-          onChange={this.handleChange.bind(this)}
-        />
-        <span className="slider-container">
-          <span className="slider"></span>
-        </span>
-      </label>
-    );
-  }
+  // Use label to pass click to inner input tag
+  return (
+    <label>
+      {text}
+      <input
+        className="checkbox"
+        type="checkbox"
+        checked={checked}
+        onChange={handleChange}
+      />
+      <span className="slider-container">
+        <span className="slider"></span>
+      </span>
+    </label>
+  )
 }
 
-export default ToggleSwitch;
+export default ToggleSwitch
