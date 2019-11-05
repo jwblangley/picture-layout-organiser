@@ -1,30 +1,28 @@
-import React, {Component} from 'react';
+import React from 'react';
 
 import './Carousel.css';
 
-class Recipe extends Component {
+const Recipe = ({slides, stringIfEmpty}) => {
 
-  render() {
-    return (
-      <div className='carousel'>
-        {
-          this.props.slides.length > 0 ?
-            this.props.slides
-            .map((slide, i) => <Slide content={slide} key={i} />)
-          :
-            <div className='warning-message'>
-              <h2>{this.props.stringIfEmpty}</h2>
-            </div>
-        }
-      </div>
-    );
-  }
+  return (
+    <div className='carousel'>
+      {
+        slides.length > 0 ?
+          slides
+          .map((slide, i) => <Slide content={slide} key={i} />)
+        :
+          <div className='warning-message'>
+            <h2>{stringIfEmpty}</h2>
+          </div>
+      }
+    </div>
+  );
 }
 
 export function Slide(props){
   return(
     <div className='carousel-slide'>
-    {props.content}
+      {props.content}
     </div>
   );
 }
