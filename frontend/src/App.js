@@ -145,6 +145,7 @@ class App extends Component {
         }
         this.delayedSaveAfterLastEdit();
 
+        // TODO: Relplace with better system (use refs?)
         // Scroll to moved selected item location
         const selectedItemAnchor = document.getElementById('current-selected-item');
         const anchorRect = selectedItemAnchor.getBoundingClientRect();
@@ -654,7 +655,7 @@ class App extends Component {
           {
             this.state.editingIndex !== NONE_INDEX &&
             <EditPage
-              text={this.state.content[this.state.editingIndex].caption}
+              caption={this.state.content[this.state.editingIndex].caption}
               media={this.state.content[this.state.editingIndex].media}
               mediaType={this.state.content[this.state.editingIndex].mediaType}
               closePage={() => this.setState({'editingIndex': NONE_INDEX})}
@@ -685,6 +686,7 @@ class App extends Component {
                 this.setState({'content': content});
                 this.delayedSaveAfterLastEdit();
 
+                //TODO: Relplace with better system (use refs?)
                 // Scroll to gallery head
                 document.getElementById("gallery-preview-head").scrollIntoView();
               }.bind(this)}
