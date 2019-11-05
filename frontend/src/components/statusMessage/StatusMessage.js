@@ -1,19 +1,17 @@
-import React, {Component} from 'react';
+import React from 'react';
 
 import './StatusMessage.css';
 
 import crossImage from '../../images/cross.svg'
 
-class StatusMessage extends Component {
+const StatusMessage = ({text, positive, handleDismiss}) => {
 
-  render() {
-    return (
-      <div className={'status-message ' + (this.props.positive ? 'positive': 'negative')}>
-        {this.props.text}
-        <img className='dismiss-icon' alt='dismiss' src={crossImage} onClick={this.props.handleDismiss} />
-      </div>
-    );
-  }
+  return (
+    <div className={'status-message ' + (positive ? 'positive': 'negative')}>
+      {text}
+      <img className='dismiss-icon' alt='dismiss' src={crossImage} onClick={handleDismiss} />
+    </div>
+  )
 }
 
 export default StatusMessage;
