@@ -2,13 +2,11 @@ import React, {useState} from 'react';
 
 import './ToggleSwitch.css';
 
-const ToggleSwitch = ({text, initial, disabled, onChange}) => {
+const ToggleSwitch = ({text, value, disabled, onChange}) => {
 
-  const [checked, setChecked] = useState(initial)
 
   function handleChange(e) {
     if (!disabled) {
-      setChecked(e.target.checked)
       onChange(e.target.checked);
     }
   }
@@ -20,7 +18,7 @@ const ToggleSwitch = ({text, initial, disabled, onChange}) => {
       <input
         className="checkbox"
         type="checkbox"
-        checked={checked}
+        checked={value}
         onChange={handleChange}
       />
       <span className="slider-container">
