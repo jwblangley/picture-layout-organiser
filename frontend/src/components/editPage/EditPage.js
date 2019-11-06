@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {useState} from 'react';
 
 import './EditPage.css';
 
@@ -7,37 +7,29 @@ import Carousel from '../carousel/Carousel.js';
 import crossImage from '../../images/cross.svg'
 import binImage from '../../images/bin.svg'
 
-class EditPage extends Component {
+const EditPage = ({media, mediaType, caption, saveCaption, closePage, setGalleryItemAsGalleryHead, deleteImage}) => {
 
-  // TODO: Implement ability to set gallery head
+  const [text, setText] = useState(caption)
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      'text': props.text
-    }
-  }
-
-  generateMediaPreview(media, mediaType) {
+  function generateMediaPreview(media, mediaType) {
     if (mediaType === 'video') {
       return (
         <video className="video-preview" controls>
           <source src={media} type="video/mp4" />
           Your browser does not support the video tag.
         </video>
-      );
+      )
     } else if (mediaType === 'gallery') {
       return (
         <Carousel
           stringIfEmpty="Empty Gallery"
           slides={media.map((galleryItem, index) => {
-            var mediaPreview = this.generateMediaPreview(galleryItem.media, galleryItem.mediaType)
-            return this.generateGalleryItemWrapper(mediaPreview, index);
+            var mediaPreview = generateMediaPreview(galleryItem.media, galleryItem.mediaType)
+            return generateGalleryItemWrapper(mediaPreview, index);
             }
           )}
-
         />
-      );
+      )
     } else if (mediaType === 'image') {
       // Standard image
       var backgroundImageStyle = {
@@ -48,12 +40,12 @@ class EditPage extends Component {
           style={backgroundImageStyle}
           className='image-preview'
         ></div>
-      );
+      )
     }
     throw new Error("Unknown media type");
   }
 
-  generateGalleryItemWrapper(itemPreview, itemIndex) {
+  function generateGalleryItemWrapper(itemPreview, itemIndex) {
     return (
       <div className='gallery-item-wrapper'>
         {
@@ -67,48 +59,45 @@ class EditPage extends Component {
           itemIndex > 0 &&
           (
             <button
-              onClick={() => this.props.setGalleryItemAsGalleryHead(itemIndex)}
+              onClick={() => setGalleryItemAsGalleryHead(itemIndex)}
             >
               Make first
             </button>
           )
         }
       </div>
-    );
+    )
   }
 
-  render() {
-
-    return (
-      <div className='edit-page'>
-        <img
-          src={crossImage}
-          alt='close'
-          className='exit-icon'
-          onClick={() => this.props.closePage()}
-        />
-        {this.generateMediaPreview(this.props.media, this.props.mediaType)}
-        <img
-          src={binImage}
-          alt='delete item'
-          className='media-delete-icon'
-          onClick={this.props.deleteImage}
-        />
-        <textarea
-          className={"caption-input-area"}
-          placeholder={"Enter a caption"}
-          value={this.state.text}
-          onChange={(e) => this.setState({'text': e.target.value})}
-        />
-        <button
-          id='save-caption-button'
-          onClick={() => this.props.saveCaption(this.state.text)}
-        >
-          Save
-        </button>
-      </div>
-    );
-  }
+  return (
+    <div className='edit-page'>
+      <img
+        src={crossImage}
+        alt='close'
+        className='exit-icon'
+        onClick={() => closePage()}
+      />
+      {generateMediaPreview(media, mediaType)}
+      <img
+        src={binImage}
+        alt='delete item'
+        className='media-delete-icon'
+        onClick={deleteImage}
+      />
+      <textarea
+        className={"caption-input-area"}
+        placeholder={"Enter a caption"}
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+      />
+      <button
+        id='save-caption-button'
+        onClick={() => saveCaption(text)}
+      >
+        Save
+      </button>
+    </div>
+  )
 }
 
 export default EditPage;

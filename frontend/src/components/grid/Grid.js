@@ -1,27 +1,25 @@
-import React, {Component} from 'react';
+import React from 'react';
 
 import './Grid.css';
 
-class Grid extends Component {
+const Grid = ({gridContent, cols}) => {
 
-  render() {
-    var rows=[];
-    for(var i = 0; i < this.props.gridContent.length; i += this.props.cols) {
-      rows.push(
-        <div className='grid-row' key={i}>
-          {this.props.gridContent.slice(i, i + this.props.cols).map((item, index) =>
-            <div className='grid-item' key={index}>{item}</div>
-          )}
-        </div>
-      );
-    }
-
-    return (
-      <div className='grid'>
-        {rows}
+  var rows=[];
+  for(var i = 0; i < gridContent.length; i += cols) {
+    rows.push(
+      <div className='grid-row' key={i}>
+        {gridContent.slice(i, i + cols).map((item, index) =>
+          <div className='grid-item' key={index}>{item}</div>
+        )}
       </div>
     );
   }
+
+  return (
+    <div className='grid' style={{margin: 'auto'}}>
+      {rows}
+    </div>
+  )
 }
 
 export default Grid;
