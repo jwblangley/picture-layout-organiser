@@ -16,7 +16,7 @@ const Grid = ({gridContent, cols}) => {
   }
 
   return (
-    <div className='grid'>
+    <div className='grid' style={{margin: 'auto'}}>
       {rows}
     </div>
   )

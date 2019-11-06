@@ -571,47 +571,47 @@ const App = () => {
   // N.B: hide content whilst uploading to prevent race conditions
   var gridContent = (
     <div id='main-grid' className='App' style={{'display': uploading ? 'none' : 'table'}}>
-    <h2>{saved ? "Content is saved and up-to-date" : "Saving"}</h2>
-    <Grid
-      cols={NUM_COLS}
-      gridContent={content.map((c, index) => (
-        <ImageSquare
-          media={c.media}
-          mediaType={c.mediaType}
-          captioned={c.caption !== ''}
-          thumbnail={c.thumbnail}
-          selected={selectedIndex === index}
-          locked={c.locked}
-          toggleLock={function(e) {
-            // Disabled when editing - otherwise lock up to here
-            e.stopPropagation();
-            if (editingIndex === NONE_INDEX) {
-              lockContentAfterIndex(index);
-            }
-          }}
-          handleClick={function() {
-            // Disabled when editing, else if not locked, select item
-            if (editingIndex === NONE_INDEX) {
-              if (!isContentLocked(index)) {
-                if (selectedIndex === index) {
-                  deselectSelectedItem();
-                } else {
-                  setSelectedIndex(index)
+      <h2>{saved ? "Content is saved and up-to-date" : "Saving"}</h2>
+      <Grid
+        cols={NUM_COLS}
+        gridContent={content.map((c, index) => (
+          <ImageSquare
+            media={c.media}
+            mediaType={c.mediaType}
+            captioned={c.caption !== ''}
+            thumbnail={c.thumbnail}
+            selected={selectedIndex === index}
+            locked={c.locked}
+            toggleLock={function(e) {
+              // Disabled when editing - otherwise lock up to here
+              e.stopPropagation();
+              if (editingIndex === NONE_INDEX) {
+                lockContentAfterIndex(index);
+              }
+            }}
+            handleClick={function() {
+              // Disabled when editing, else if not locked, select item
+              if (editingIndex === NONE_INDEX) {
+                if (!isContentLocked(index)) {
+                  if (selectedIndex === index) {
+                    deselectSelectedItem();
+                  } else {
+                    setSelectedIndex(index)
+                  }
                 }
               }
-            }
-          }}
-          handleEditClick={function(e) {
-            // If not editing something else, choose this for editing
-            e.stopPropagation();
-            if (editingIndex === NONE_INDEX) {
-              setEditingIndex(index)
-              setSelectedIndex(NONE_INDEX)
-            }
-          }}
-        />
-      ))}
-    />
+            }}
+            handleEditClick={function(e) {
+              // If not editing something else, choose this for editing
+              e.stopPropagation();
+              if (editingIndex === NONE_INDEX) {
+                setEditingIndex(index)
+                setSelectedIndex(NONE_INDEX)
+              }
+            }}
+          />
+        ))}
+      />
     </div>
   );
 
