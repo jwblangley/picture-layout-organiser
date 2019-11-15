@@ -1,13 +1,13 @@
-import React, {useState} from 'react';
+import React, {useState} from 'react'
 
-import './ToggleSwitch.css';
+import './ToggleSwitch.css'
 
 const ToggleSwitch = ({text, value, disabled, onChange}) => {
 
 
   function handleChange(e) {
     if (!disabled) {
-      onChange(e.target.checked);
+      onChange(e.target.checked)
     }
   }
 

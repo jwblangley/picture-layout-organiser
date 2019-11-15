@@ -1,18 +1,18 @@
-import React from 'react';
+import React from 'react'
 
-import './Grid.css';
+import './Grid.css'
 
 const Grid = ({gridContent, cols}) => {
 
-  var rows=[];
-  for(var i = 0; i < gridContent.length; i += cols) {
+  var rows=[]
+  for (var i = 0; i < gridContent.length; i += cols) {
     rows.push(
       <div className='grid-row' key={i}>
         {gridContent.slice(i, i + cols).map((item, index) =>
           <div className='grid-item' key={index}>{item}</div>
         )}
       </div>
-    );
+    )
   }
 
   return (
@@ -22,4 +22,4 @@ const Grid = ({gridContent, cols}) => {
   )
 }
 
-export default Grid;
+export default Grid

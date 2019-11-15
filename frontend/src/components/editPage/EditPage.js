@@ -1,8 +1,8 @@
-import React, {useState} from 'react';
+import React, {useState} from 'react'
 
-import './EditPage.css';
+import './EditPage.css'
 
-import Carousel from '../carousel/Carousel.js';
+import Carousel from '../carousel/Carousel.js'
 
 import crossImage from '../../images/cross.svg'
 import binImage from '../../images/bin.svg'
@@ -25,7 +25,7 @@ const EditPage = ({media, mediaType, caption, saveCaption, closePage, setGallery
           stringIfEmpty="Empty Gallery"
           slides={media.map((galleryItem, index) => {
             var mediaPreview = generateMediaPreview(galleryItem.media, galleryItem.mediaType)
-            return generateGalleryItemWrapper(mediaPreview, index);
+            return generateGalleryItemWrapper(mediaPreview, index)
             }
           )}
         />
@@ -42,7 +42,7 @@ const EditPage = ({media, mediaType, caption, saveCaption, closePage, setGallery
         ></div>
       )
     }
-    throw new Error("Unknown media type");
+    throw new Error("Unknown media type")
   }
 
   function generateGalleryItemWrapper(itemPreview, itemIndex) {
@@ -100,4 +100,4 @@ const EditPage = ({media, mediaType, caption, saveCaption, closePage, setGallery
   )
 }
 
-export default EditPage;
+export default EditPage
