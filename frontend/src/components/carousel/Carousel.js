@@ -1,6 +1,6 @@
-import React from 'react';
+import React from 'react'
 
-import './Carousel.css';
+import './Carousel.css'
 
 const Recipe = ({slides, stringIfEmpty}) => {
 
@@ -16,7 +16,7 @@ const Recipe = ({slides, stringIfEmpty}) => {
           </div>
       }
     </div>
-  );
+  )
 }
 
 export function Slide(props){
@@ -24,7 +24,7 @@ export function Slide(props){
     <div className='carousel-slide'>
       {props.content}
     </div>
-  );
+  )
 }
 
-export default Recipe;
+export default Recipe

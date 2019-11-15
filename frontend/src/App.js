@@ -1,20 +1,20 @@
-import React, {useState, useEffect, useRef} from 'react';
-import axios from 'axios';
+import React, {useState, useEffect, useRef} from 'react'
+import axios from 'axios'
 
-import './App.css';
+import './App.css'
 
-import {Progress} from 'reactstrap';
+import {Progress} from 'reactstrap'
 
-import Grid from './components/grid/Grid.js';
-import ImageSquare from './components/imageSquare/ImageSquare.js';
-import StatusMessage from './components/statusMessage/StatusMessage.js';
-import EditPage from './components/editPage/EditPage.js';
-import ToggleSwitch from './components/toggleSwitch/ToggleSwitch.js';
+import Grid from './components/grid/Grid.js'
+import ImageSquare from './components/imageSquare/ImageSquare.js'
+import StatusMessage from './components/statusMessage/StatusMessage.js'
+import EditPage from './components/editPage/EditPage.js'
+import ToggleSwitch from './components/toggleSwitch/ToggleSwitch.js'
 
-import arraySwap from './ArraySwap.js';
-import partition from './Partition.js';
+import arraySwap from './ArraySwap.js'
+import partition from './Partition.js'
 
-import binIcon from './images/bin.svg';
+import binIcon from './images/bin.svg'
 
 import {
   getFormattedAddress,
@@ -25,52 +25,52 @@ import {
   deleteAccount,
   uploadUserMedia,
   uploadUserGallery
-  } from './adapters/ManagerAdapter.js';
+  } from './adapters/ManagerAdapter.js'
 
-require('dotenv').config();
+require('dotenv').config()
 
-const NUM_COLS = 3;
-const MAX_IN_GALLERY = 10;
+const NUM_COLS = 3
+const MAX_IN_GALLERY = 10
 
-const NONE_INDEX = -1;
+const NONE_INDEX = -1
 
-const ENTER_KEY = 13;
-const ESC_KEY = 27;
-const LEFT_KEY = 37;
-const UP_KEY = 38;
-const RIGHT_KEY = 39;
-const DOWN_KEY = 40;
+const ENTER_KEY = 13
+const ESC_KEY = 27
+const LEFT_KEY = 37
+const UP_KEY = 38
+const RIGHT_KEY = 39
+const DOWN_KEY = 40
 
-const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'video/mp4'];
+const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'video/mp4']
 
-var lastUpdate = 0;
+var lastUpdate = 0
 
 function getBackendPorts() {
   return ({
     'backend': parseInt(process.env.REACT_APP_BACKEND_PORT_BASE),
     'imageHost': parseInt(process.env.REACT_APP_BACKEND_PORT_BASE) + 1
-  });
+  })
 }
 
 function copyToClipBoard(text) {
   // Add a new <input> element to body temporarily
-  var body = document.getElementsByTagName('body')[0];
-  var tempInput = document.createElement('INPUT');
-  body.appendChild(tempInput);
+  var body = document.getElementsByTagName('body')[0]
+  var tempInput = document.createElement('INPUT')
+  body.appendChild(tempInput)
   // Copy text into that element
-  tempInput.setAttribute('value', text);
+  tempInput.setAttribute('value', text)
   // Select the text
-  tempInput.select();
-  tempInput.setSelectionRange(0, 99999); /*For mobile devices*/
+  tempInput.select()
+  tempInput.setSelectionRange(0, 99999) /*For mobile devices*/
   // Run the copy command
-  document.execCommand('copy');
+  document.execCommand('copy')
   // Remove the temporary element
-  body.removeChild(tempInput);
+  body.removeChild(tempInput)
 }
 
 function downloadUrl(url) {
   // Remove path (url) to file
-  var fileName = url.substring(url.lastIndexOf('/') + 1);
+  var fileName = url.substring(url.lastIndexOf('/') + 1)
 
   // Download url as blob to then download straight to device (not new tab)
   // N.B: CORS must be enabled on requested files
@@ -79,12 +79,12 @@ function downloadUrl(url) {
     'method': 'GET',
     'responseType': 'blob',
   }).then((response) => {
-    const url = window.URL.createObjectURL(new Blob([response.data]));
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', fileName);
-    link.click();
-  });
+    const url = window.URL.createObjectURL(new Blob([response.data]))
+    const link = document.createElement('a')
+    link.href = url
+    link.setAttribute('download', fileName)
+    link.click()
+  })
 }
 
 const App = () => {
@@ -107,8 +107,8 @@ const App = () => {
   const fileUploaderRef = useRef(null)
 
   useEffect(() => {
-    document.addEventListener("keydown", handleKeyDown, false);
-    return () => document.removeEventListener("keydown", handleKeyDown, false);
+    document.addEventListener("keydown", handleKeyDown, false)
+    return () => document.removeEventListener("keydown", handleKeyDown, false)
   })
 
 
@@ -119,12 +119,12 @@ const App = () => {
       setSelectedIndex(NONE_INDEX)
       setEditingIndex(NONE_INDEX)
     }
-    const indexChangeMap = new Map([[LEFT_KEY, -1], [UP_KEY, -1 * NUM_COLS], [RIGHT_KEY, 1], [DOWN_KEY, NUM_COLS]]);
+    const indexChangeMap = new Map([[LEFT_KEY, -1], [UP_KEY, -1 * NUM_COLS], [RIGHT_KEY, 1], [DOWN_KEY, NUM_COLS]])
     if (selectedIndex !== NONE_INDEX && indexChangeMap.has(e.keyCode)) {
       // Prevent arrow key scrolling
-      e.preventDefault();
+      e.preventDefault()
 
-      var swapToIndex = selectedIndex + indexChangeMap.get(e.keyCode);
+      var swapToIndex = selectedIndex + indexChangeMap.get(e.keyCode)
 
       // N.B selectedIndex should never be locked
       if (!isContentLocked(selectedIndex) && !isContentLocked(swapToIndex)) {
@@ -133,32 +133,32 @@ const App = () => {
           setSelectedIndex(swapToIndex)
           setContent(newContent)
           setSaved(false)
-          delayedSaveAfterLastEdit(newContent);
+          delayedSaveAfterLastEdit(newContent)
         } catch(err) {
-          console.log(err);
+          console.log(err)
         }
 
         // TODO: Relplace with better system (use refs?)
         // Scroll to moved selected item location
-        const selectedItemAnchor = document.getElementById('current-selected-item');
-        const anchorRect = selectedItemAnchor.getBoundingClientRect();
-        const absoluteAnchorTop = anchorRect.top + window.pageYOffset;
-        const middleScrollPoint = absoluteAnchorTop - (window.innerHeight / 2);
-        window.scrollTo(0, middleScrollPoint);
+        const selectedItemAnchor = document.getElementById('current-selected-item')
+        const anchorRect = selectedItemAnchor.getBoundingClientRect()
+        const absoluteAnchorTop = anchorRect.top + window.pageYOffset
+        const middleScrollPoint = absoluteAnchorTop - (window.innerHeight / 2)
+        window.scrollTo(0, middleScrollPoint)
       }
     }
   }
 
   function formatContent(content) {
-    var newContent = [...content];
-    var imageHostPrefix = getFormattedAddress(imageHostAddress) + '/';
+    var newContent = [...content]
+    var imageHostPrefix = getFormattedAddress(imageHostAddress) + '/'
 
     return newContent.map(c => {
       var contentItem = {...c}
       if (contentItem.mediaType === 'image' || contentItem.mediaType === 'video') {
-        contentItem.media = imageHostPrefix + contentItem.media;
+        contentItem.media = imageHostPrefix + contentItem.media
         if (contentItem.mediaType === 'video') {
-          contentItem.thumbnail = imageHostPrefix + contentItem.thumbnail;
+          contentItem.thumbnail = imageHostPrefix + contentItem.thumbnail
         }
       } else if (contentItem.mediaType === 'gallery') {
         contentItem.media = contentItem.media.map(galleryItem => {
@@ -166,31 +166,31 @@ const App = () => {
             return {
               'media': imageHostPrefix + galleryItem.media,
               'mediaType': 'image'
-            };
+            }
           } else if (galleryItem.mediaType === 'video') {
             return {
               'media': imageHostPrefix + galleryItem.media,
               'mediaType': 'video',
               'thumbnail': imageHostPrefix + galleryItem.thumbnail,
-            };
+            }
           }
-          throw new Error("Unknown media type");
-        });
+          throw new Error("Unknown media type")
+        })
       }
-      return contentItem;
-    });
+      return contentItem
+    })
   }
 
   function stripContentFormat(formattedContent) {
-    var newContent = [...formattedContent];
-    var imageHostPrefix = getFormattedAddress(imageHostAddress) + '/';
+    var newContent = [...formattedContent]
+    var imageHostPrefix = getFormattedAddress(imageHostAddress) + '/'
 
     return newContent.map(c => {
       var contentItem = {...c}
       if (contentItem.mediaType === 'image' || contentItem.mediaType === 'video') {
-        contentItem.media = contentItem.media.replace(imageHostPrefix, '');
+        contentItem.media = contentItem.media.replace(imageHostPrefix, '')
         if (contentItem.mediaType === 'video') {
-          contentItem.thumbnail = contentItem.thumbnail.replace(imageHostPrefix, '');
+          contentItem.thumbnail = contentItem.thumbnail.replace(imageHostPrefix, '')
         }
       } else if (contentItem.mediaType === 'gallery') {
         contentItem.media = contentItem.media.map(galleryItem => {
@@ -198,25 +198,25 @@ const App = () => {
             return {
               'media': galleryItem.media.replace(imageHostPrefix, ''),
               'mediaType': 'image'
-            };
+            }
           } else if (galleryItem.mediaType === 'video') {
             return {
               'media': galleryItem.media.replace(imageHostPrefix, ''),
               'mediaType': 'video',
               'thumbnail': galleryItem.thumbnail.replace(imageHostPrefix, ''),
-            };
+            }
           }
-          throw new Error("Unknown media type");
-        });
+          throw new Error("Unknown media type")
+        })
       }
-      return contentItem;
-    });
+      return contentItem
+    })
   }
 
   // 2 seconds after last update (not necessarily this call), issue a save
   function delayedSaveAfterLastEdit(contentToSave) {
-    const delay = 2000;
-    lastUpdate = Date.now();
+    const delay = 2000
+    lastUpdate = Date.now()
     setTimeout(function(){
       if (Date.now() - lastUpdate > delay - 100) {
         var strippedContent = stripContentFormat(contentToSave)
@@ -224,7 +224,7 @@ const App = () => {
           setSaved(true)
         })
       }
-    }, delay);
+    }, delay)
   }
 
   function deselectSelectedItem() {
@@ -234,28 +234,28 @@ const App = () => {
   function isContentLocked(index) {
     // N.B: content outside of the array is said to be locked also
     if (index < 0 || index >= content.length) {
-      return true;
+      return true
     }
-    return content[index].locked;
+    return content[index].locked
   }
 
   // Set all content items at and above the given index to locked
   function lockContentAfterIndex(lockIndex) {
     if (lockIndex === getNextDownloadIndex() + 1) {
       // Lock on furtherst locked item toggles that specific lock
-      lockIndex++;
+      lockIndex++
     }
 
-    var updatedContent = [...content];
+    var updatedContent = [...content]
     updatedContent = updatedContent.map((item, itemIndex) => {
-      var newItem = {...item};
-      newItem.locked = (itemIndex >= lockIndex);
-      return newItem;
-    });
-    deselectSelectedItem();
+      var newItem = {...item}
+      newItem.locked = (itemIndex >= lockIndex)
+      return newItem
+    })
+    deselectSelectedItem()
     setContent(updatedContent)
     setSaved(false)
-    delayedSaveAfterLastEdit(updatedContent);
+    delayedSaveAfterLastEdit(updatedContent)
   }
 
   // Returns -1 when there is no next item
@@ -263,64 +263,64 @@ const App = () => {
     var lockedIndexes = content
       .map((c, index) => ({'index': index, 'locked':c.locked}))
       .filter(c => c.locked)
-      .map(c => c.index);
+      .map(c => c.index)
     if (lockedIndexes.length === 0) {
       // None locked: return end
-      return content.length - 1;
+      return content.length - 1
     }
-    var minLocked = Math.min(...lockedIndexes);
-    return minLocked - 1;
+    var minLocked = Math.min(...lockedIndexes)
+    return minLocked - 1
   }
 
   function saveContentItemToDevice(index, andLock) {
-    var contentToSave = content[index];
+    var contentToSave = content[index]
     // Copy caption to clipboard
-    var caption = contentToSave.caption;
-    copyToClipBoard(caption);
+    var caption = contentToSave.caption
+    copyToClipBoard(caption)
 
     // Download file(s) of content
     if (contentToSave.mediaType === 'image' || contentToSave.mediaType === 'video') {
-      downloadUrl(contentToSave.media);
+      downloadUrl(contentToSave.media)
     } else if (contentToSave.mediaType === 'gallery') {
-      contentToSave.media.forEach(galleryItem => downloadUrl(galleryItem.media));
+      contentToSave.media.forEach(galleryItem => downloadUrl(galleryItem.media))
     } else {
-      throw new Error("Unknown media type");
+      throw new Error("Unknown media type")
     }
 
     if (andLock) {
       // For normal 'next' usage, lock item
-      lockContentAfterIndex(index);
-      reportStatusMessage("Downloaded item, copied caption to clipboard and locked item", true);
+      lockContentAfterIndex(index)
+      reportStatusMessage("Downloaded item, copied caption to clipboard and locked item", true)
     } else {
-      reportStatusMessage("Downloaded item and copied caption to clipboard", true);
+      reportStatusMessage("Downloaded item and copied caption to clipboard", true)
     }
   }
 
   // When a different account is selcted
   // Also handle new account creation
   function handleAccountSelect(option) {
-    deselectSelectedItem();
+    deselectSelectedItem()
     if (option === 'create-new') {
       if (backendAddress !== null) {
         // Create new account
-        var newName = prompt("New account name");
+        var newName = prompt("New account name")
         // Remove whitespace from beginning and end of input
         if (newName !== null) {
-          newName = newName.trim();
+          newName = newName.trim()
           if (newName !== null && newName !== "") {
             // Create account then switch to that new account - if a duplicate name is entered, enter that account
             createAccount(newName, backendAddress, function() {
               // Update list of users
               listUsers(backendAddress, (users) => {
                 setUsers(users)
-                accountSelectorRef.current.value = newName;
+                accountSelectorRef.current.value = newName
                 // Get new user's content - usually empty unless duplicate name used
                 getUserContent(newName, backendAddress, function(incomingContent){
                   setUsername(newName)
                   setContent(formatContent(incomingContent))
-                });
+                })
               })
-            });
+            })
           }
         }
       }
@@ -330,18 +330,18 @@ const App = () => {
       setContent([])
     } else {
       // Default - switch to an existing user
-      var username = option;
+      var username = option
       getUserContent(username, backendAddress, function(content) {
         setUsername(username)
         setContent(formatContent(content))
-      });
+      })
     }
   }
 
   // Save caption text to content at given index
   function saveCaption(newCaption, index) {
-    var newContent = [...content];
-    newContent[index].caption = newCaption;
+    var newContent = [...content]
+    newContent[index].caption = newCaption
     setContent(newContent)
     setSaved(false)
     delayedSaveAfterLastEdit(newContent)
@@ -349,9 +349,9 @@ const App = () => {
 
   // Remove content from given index
   function deleteImage(index) {
-    var newContent = [...content];
+    var newContent = [...content]
     // Delete 1 item at index, index
-    newContent.splice(index, 1);
+    newContent.splice(index, 1)
     setContent(newContent)
     setSaved(false)
     delayedSaveAfterLastEdit(newContent)
@@ -369,7 +369,7 @@ const App = () => {
   }
 
   function uploadProgressUpdate(progressEvent) {
-    var progressPercent = progressEvent.loaded / progressEvent.total * 100;
+    var progressPercent = progressEvent.loaded / progressEvent.total * 100
     setUploadPercent(progressPercent)
   }
 
@@ -377,30 +377,30 @@ const App = () => {
     if (!res.ok) {
       reportStatusMessage("Failed to upload, please try again", false)
     } else {
-      reportStatusMessage(res.text, true);
+      reportStatusMessage(res.text, true)
       // Display newly uploaded content
       getUserContent(username, backendAddress, function(incomingContent) {
         setContent(formatContent(incomingContent))
-      });
+      })
     }
     // Indicate to state that uploading is finished
     setUploading(false)
   }
 
   function handleFilesSelected(e) {
-    var allowingFiles = partition(e.target.files, f => ALLOWED_MIME_TYPES.includes(f.type));
-    var validFiles = allowingFiles.pass;
-    var disallowedFiles = allowingFiles.fail;
+    var allowingFiles = partition(e.target.files, f => ALLOWED_MIME_TYPES.includes(f.type))
+    var validFiles = allowingFiles.pass
+    var disallowedFiles = allowingFiles.fail
 
     // Report disallowed files
-    disallowedFiles.forEach(f => reportStatusMessage("Could not upload \"" + f.name + "\" - unsupported type", false));
+    disallowedFiles.forEach(f => reportStatusMessage("Could not upload \"" + f.name + "\" - unsupported type", false))
 
     // N.B: Content must be saved before upload
     if (username !== null && saved) {
       if (validFiles.length > 0) {
         if (galleryUpload && validFiles.length > 1) {
           if (validFiles.length > MAX_IN_GALLERY) {
-            reportStatusMessage("Cannot create gallery of more than " + MAX_IN_GALLERY + " items", false);
+            reportStatusMessage("Cannot create gallery of more than " + MAX_IN_GALLERY + " items", false)
             return
           }
           uploadUserGallery(
@@ -411,7 +411,7 @@ const App = () => {
             uploadProgressUpdate,
             // callback
             uploadCompleteCallback
-          );
+          )
         } else {
           setUploading(true)
           setUploadPercent(0)
@@ -423,18 +423,18 @@ const App = () => {
             uploadProgressUpdate,
             // callback
             uploadCompleteCallback
-          );
+          )
         }
       }
     } else {
       // Should never be reached as inputs are disabled in this case
-      reportStatusMessage("Something went wrong, please try again", false);
+      reportStatusMessage("Something went wrong, please try again", false)
       // N.B: uploading has not been set to true, so we do not need to set it to false here
     }
 
     // Remove any file from selection
     // Causes confusing behaviour when selecting the same file twice in a row otherwise due to onChange
-    e.target.value = null;
+    e.target.value = null
   }
 
 
@@ -473,21 +473,21 @@ const App = () => {
             onKeyDown={
               function(e){
                 if (e.keyCode === ENTER_KEY) {
-                  var ports = getBackendPorts();
-                  var backendAddress = e.target.value + ':' + ports.backend;
-                  var imageHostAddress = e.target.value + ':' + ports.imageHost;
+                  var ports = getBackendPorts()
+                  var backendAddress = e.target.value + ':' + ports.backend
+                  var imageHostAddress = e.target.value + ':' + ports.imageHost
                   setBackendAddress(backendAddress)
                   setImageHostAddress(imageHostAddress)
 
                   // Populate state with list of users
                   listUsers(backendAddress, function(users){
                     setUsers(users)
-                  });
+                  })
                 }
               }}
             onFocus={function(e){
               // Deselect item on focus so that arrow key events only affect the input
-              deselectSelectedItem();
+              deselectSelectedItem()
             }}
           />
         </span>
@@ -517,9 +517,9 @@ const App = () => {
                       setUsers(users)
                       setUsername(null)
                       setContent([])
-                      accountSelectorRef.current.value = '';
-                    });
-                  });
+                      accountSelectorRef.current.value = ''
+                    })
+                  })
                 }
               }
             }}
@@ -541,12 +541,12 @@ const App = () => {
         <button
         disabled={uploading || editingIndex !== NONE_INDEX || username === null || backendAddress === null }
         onClick={function() {
-          var toDownloadIndex = selectedIndex === NONE_INDEX ? getNextDownloadIndex() : selectedIndex;
+          var toDownloadIndex = selectedIndex === NONE_INDEX ? getNextDownloadIndex() : selectedIndex
           if (toDownloadIndex === -1) {
-            reportStatusMessage("No next item available", false);
-            return;
+            reportStatusMessage("No next item available", false)
+            return
           }
-          saveContentItemToDevice(toDownloadIndex, selectedIndex === NONE_INDEX);
+          saveContentItemToDevice(toDownloadIndex, selectedIndex === NONE_INDEX)
         }}
         >
           {selectedIndex === NONE_INDEX ? 'Download latest and lock' : ' Download selected'}
@@ -565,7 +565,7 @@ const App = () => {
         )}
       </div>
     </div>
-  );
+  )
 
   // Prepare main gridContent for display when appropriate
   // N.B: hide content whilst uploading to prevent race conditions
@@ -584,9 +584,9 @@ const App = () => {
             locked={c.locked}
             toggleLock={function(e) {
               // Disabled when editing - otherwise lock up to here
-              e.stopPropagation();
+              e.stopPropagation()
               if (editingIndex === NONE_INDEX) {
-                lockContentAfterIndex(index);
+                lockContentAfterIndex(index)
               }
             }}
             handleClick={function() {
@@ -594,7 +594,7 @@ const App = () => {
               if (editingIndex === NONE_INDEX) {
                 if (!isContentLocked(index)) {
                   if (selectedIndex === index) {
-                    deselectSelectedItem();
+                    deselectSelectedItem()
                   } else {
                     setSelectedIndex(index)
                   }
@@ -603,7 +603,7 @@ const App = () => {
             }}
             handleEditClick={function(e) {
               // If not editing something else, choose this for editing
-              e.stopPropagation();
+              e.stopPropagation()
               if (editingIndex === NONE_INDEX) {
                 setEditingIndex(index)
                 setSelectedIndex(NONE_INDEX)
@@ -613,14 +613,14 @@ const App = () => {
         ))}
       />
     </div>
-  );
+  )
 
   // Content to render when there is no grid to show (no account selected)
   var noGridContent = (
     <div className='empty-content'>
       Please connect backend and select an account
     </div>
-  );
+  )
 
   return (
     <div>
@@ -643,39 +643,39 @@ const App = () => {
             saveCaption={text => saveCaption(text, editingIndex)}
             deleteImage={function() {
               if (window.confirm("Delete image?")) {
-                deleteImage(editingIndex);
+                deleteImage(editingIndex)
                 setEditingIndex(NONE_INDEX)
               }
             }}
             setGalleryItemAsGalleryHead={function(itemIndex) {
               // Get old items
-              var newContent = [...content];
-              var selectedGallery = newContent[editingIndex];
-              var galleryMedia = selectedGallery.media;
-              var toHead = galleryMedia[itemIndex];
+              var newContent = [...content]
+              var selectedGallery = newContent[editingIndex]
+              var galleryMedia = selectedGallery.media
+              var toHead = galleryMedia[itemIndex]
 
               // Delete 1 item at index, itemIndex - remove item from original place in list
-              galleryMedia.splice(itemIndex, 1);
+              galleryMedia.splice(itemIndex, 1)
               // Move item to head of list
-              galleryMedia = [toHead, ...galleryMedia];
+              galleryMedia = [toHead, ...galleryMedia]
 
               // Build new items
               selectedGallery.media = galleryMedia
-              newContent[editingIndex] = selectedGallery;
+              newContent[editingIndex] = selectedGallery
 
               // Set state and save
               setContent(newContent)
-              delayedSaveAfterLastEdit(newContent);
+              delayedSaveAfterLastEdit(newContent)
 
               //TODO: Relplace with better system (use refs?)
               // Scroll to gallery head
-              document.getElementById("gallery-preview-head").scrollIntoView();
+              document.getElementById("gallery-preview-head").scrollIntoView()
             }}
           />
         }
       </div>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App

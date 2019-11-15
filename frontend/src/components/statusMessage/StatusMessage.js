@@ -1,6 +1,6 @@
-import React from 'react';
+import React from 'react'
 
-import './StatusMessage.css';
+import './StatusMessage.css'
 
 import crossImage from '../../images/cross.svg'
 
