@@ -4,7 +4,13 @@ import axios from 'axios'
 import './App.css'
 
 import {Progress} from 'reactstrap'
-import {Button} from '@material-ui/core/index'
+import {
+  Button,
+  TextField,
+  Select,
+  MenuItem,
+  InputLabel
+} from '@material-ui/core/index'
 
 import Grid from './components/grid/Grid'
 import ImageSquare from './components/imageSquare/ImageSquare'
@@ -36,6 +42,7 @@ const NUM_COLS = 3
 const MAX_IN_GALLERY = 10
 
 const NONE_INDEX = -1
+const EMPTY_USER = ''
 
 const ENTER_KEY = 13
 const ESC_KEY = 27
@@ -100,14 +107,13 @@ const App = () => {
   const [selectedIndex, setSelectedIndex] = useState(NONE_INDEX)
   const [editingIndex, setEditingIndex] = useState(NONE_INDEX)
   const [content, setContent] = useState([])
-  const [username, setUsername] = useState(null)
+  const [username, setUsername] = useState(EMPTY_USER)
   const [saved, setSaved] = useState(true)
   const [statusMessages, setStatusMessages] = useState([])
   const [uploading, setUploading] = useState(false)
   const [uploadPercent, setUploadPercent] = useState(0)
   const [galleryUpload, setGalleryUpload] = useState(false)
 
-  const accountSelectorRef = useRef(null)
   const fileUploaderRef = useRef(null)
 
   useEffect(() => {
@@ -317,7 +323,6 @@ const App = () => {
               // Update list of users
               listUsers(backendAddress, (users) => {
                 setUsers(users)
-                accountSelectorRef.current.value = newName
                 // Get new user's content - usually empty unless duplicate name used
                 getUserContent(newName, backendAddress, function(incomingContent){
                   setUsername(newName)
@@ -328,9 +333,8 @@ const App = () => {
           }
         }
       }
-    } else if (option === '') {
-      // None selected
-      setUsername(null)
+    } else if (option === EMPTY_USER) {
+      setUsername(EMPTY_USER)
       setContent([])
     } else {
       // Default - switch to an existing user
@@ -445,7 +449,7 @@ const App = () => {
     <span>
       <Button
         className={classes.button}
-        disabled={username === null || !saved}
+        disabled={username === EMPTY_USER || !saved}
         variant='contained'
         color='primary'
         onClick={() => fileUploaderRef.current.click()}
@@ -457,7 +461,7 @@ const App = () => {
         id="add-file"
         ref={fileUploaderRef}
         style={{display: "none"}}
-        disabled={username === null || !saved || uploading || editingIndex !== NONE_INDEX}
+        disabled={username === EMPTY_USER || !saved || uploading || editingIndex !== NONE_INDEX}
         onChange={handleFilesSelected}
       />
     </span>
@@ -467,9 +471,9 @@ const App = () => {
     <div className="top-bar">
       <div className="admin-bar">
         <span className="backend-address-input">
-          Backend Address:
-          <input
-            type="text"
+          <TextField
+            className={classes.textField}
+            label="Backend address"
             disabled={uploading || editingIndex !== NONE_INDEX}
             onKeyDown={
               function(e){
@@ -493,32 +497,32 @@ const App = () => {
           />
         </span>
         <span className='account-select'>
-          Account:
-          <select
-            ref={accountSelectorRef}
+          <InputLabel id='account-select-label'>Account</InputLabel>
+          <Select
+            value={username}
+            labelId='account-select-label'
             disabled={backendAddress === null || uploading || editingIndex !== NONE_INDEX}
-            onChange={(e) => handleAccountSelect(e.target.value)}
+            onChange={e => handleAccountSelect(e.target.value)}
           >
-            <option value=''>None selected</option>
-            {users.map(username =>
-              (<option key={username} value={username}>{username}</option>)
+            <MenuItem value={EMPTY_USER}>None selected</MenuItem>
+            {users.map(name =>
+              (<MenuItem key={name} value={name}>{name}</MenuItem>)
             )}
-            <option value='create-new'>+ New account</option>
-          </select>
+            <MenuItem value='create-new'>+ New account</MenuItem>
+          </Select>
           <img
             id='account-delete-icon'
             src={binIcon}
             alt='delete account'
             onClick={function() {
-              if (backendAddress !== null && username !== null && !uploading && editingIndex === NONE_INDEX) {
+              if (backendAddress !== null && username !== EMPTY_USER && !uploading && editingIndex === NONE_INDEX) {
                 if (window.confirm("Are you sure you want to delete \"" + username + "\" from the organiser")) {
-                  // Delete account, reread list of users and set current user to null user and content empty
+                  // Delete account, reread list of users and set current user to the empty user and content empty
                   deleteAccount(username, backendAddress, function() {
                     listUsers(backendAddress, (users) => {
                       setUsers(users)
-                      setUsername(null)
+                      setUsername(EMPTY_USER)
                       setContent([])
-                      accountSelectorRef.current.value = ''
                     })
                   })
                 }
@@ -539,19 +543,22 @@ const App = () => {
         </div>
       </div>
       <div className='download-button'>
-        <button
-        disabled={uploading || editingIndex !== NONE_INDEX || username === null || backendAddress === null }
-        onClick={function() {
-          var toDownloadIndex = selectedIndex === NONE_INDEX ? getNextDownloadIndex() : selectedIndex
-          if (toDownloadIndex === -1) {
-            reportStatusMessage("No next item available", false)
-            return
-          }
-          saveContentItemToDevice(toDownloadIndex, selectedIndex === NONE_INDEX)
-        }}
+        <Button
+          className={classes.button}
+          variant='contained'
+          color='primary'
+          disabled={uploading || editingIndex !== NONE_INDEX || username === EMPTY_USER || backendAddress === null }
+          onClick={function() {
+            var toDownloadIndex = selectedIndex === NONE_INDEX ? getNextDownloadIndex() : selectedIndex
+            if (toDownloadIndex === -1) {
+              reportStatusMessage("No next item available", false)
+              return
+            }
+            saveContentItemToDevice(toDownloadIndex, selectedIndex === NONE_INDEX)
+          }}
         >
           {selectedIndex === NONE_INDEX ? 'Download latest and lock' : ' Download selected'}
-        </button>
+        </Button>
       </div>
       <div className='status-message-container'>
         {statusMessages.map((message, index) =>
@@ -629,7 +636,7 @@ const App = () => {
       <div className='page-content'>
 
         {
-          (backendAddress !== null && username !== null)
+          (backendAddress !== null && username !== EMPTY_USER)
             ? gridContent
             : noGridContent
         }

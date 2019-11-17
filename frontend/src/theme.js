@@ -1,5 +1,8 @@
 import { createMuiTheme } from '@material-ui/core/styles'
 
+
+// TODO: choose theme
+
 export default createMuiTheme({
   palette: {
     primary: {
