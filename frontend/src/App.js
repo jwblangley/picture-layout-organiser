@@ -7,6 +7,7 @@ import {Progress} from 'reactstrap'
 import {
   Button,
   TextField,
+  FormControl,
   Select,
   MenuItem,
   InputLabel
@@ -497,19 +498,21 @@ const App = () => {
           />
         </span>
         <span className='account-select'>
-          <InputLabel id='account-select-label'>Account</InputLabel>
-          <Select
-            value={username}
-            labelId='account-select-label'
-            disabled={backendAddress === null || uploading || editingIndex !== NONE_INDEX}
-            onChange={e => handleAccountSelect(e.target.value)}
-          >
-            <MenuItem value={EMPTY_USER}>None selected</MenuItem>
-            {users.map(name =>
-              (<MenuItem key={name} value={name}>{name}</MenuItem>)
-            )}
-            <MenuItem value='create-new'>+ New account</MenuItem>
-          </Select>
+          <FormControl style={{minWidth: 120}}>
+            <InputLabel id='account-select-label'>Account</InputLabel>
+            <Select
+              value={username}
+              labelId='account-select-label'
+              disabled={backendAddress === null || uploading || editingIndex !== NONE_INDEX}
+              onChange={e => handleAccountSelect(e.target.value)}
+            >
+              <MenuItem value={EMPTY_USER}>None selected</MenuItem>
+              {users.map(name =>
+                (<MenuItem key={name} value={name}>{name}</MenuItem>)
+              )}
+              <MenuItem value='create-new'>+ New account</MenuItem>
+            </Select>
+          </FormControl>
           <img
             id='account-delete-icon'
             src={binIcon}

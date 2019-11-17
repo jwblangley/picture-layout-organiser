@@ -9,10 +9,6 @@ const useStyles = makeStyles(theme => ({
       marginRight: theme.spacing(1),
       width: 300
     },
-    selectEmpty: {
-      margin: theme.spacing(1),
-      minWidth: 120,
-  }
 }))
 
 export default useStyles
