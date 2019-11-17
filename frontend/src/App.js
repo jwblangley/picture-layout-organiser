@@ -4,15 +4,18 @@ import axios from 'axios'
 import './App.css'
 
 import {Progress} from 'reactstrap'
+import {Button} from '@material-ui/core/index'
 
-import Grid from './components/grid/Grid.js'
-import ImageSquare from './components/imageSquare/ImageSquare.js'
-import StatusMessage from './components/statusMessage/StatusMessage.js'
-import EditPage from './components/editPage/EditPage.js'
-import ToggleSwitch from './components/toggleSwitch/ToggleSwitch.js'
+import Grid from './components/grid/Grid'
+import ImageSquare from './components/imageSquare/ImageSquare'
+import StatusMessage from './components/statusMessage/StatusMessage'
+import EditPage from './components/editPage/EditPage'
+import ToggleSwitch from './components/toggleSwitch/ToggleSwitch'
 
-import arraySwap from './ArraySwap.js'
-import partition from './Partition.js'
+import useStyles from './style'
+
+import arraySwap from './ArraySwap'
+import partition from './Partition'
 
 import binIcon from './images/bin.svg'
 
@@ -25,7 +28,7 @@ import {
   deleteAccount,
   uploadUserMedia,
   uploadUserGallery
-  } from './adapters/ManagerAdapter.js'
+  } from './adapters/ManagerAdapter'
 
 require('dotenv').config()
 
@@ -88,6 +91,7 @@ function downloadUrl(url) {
 }
 
 const App = () => {
+  const classes = useStyles()
 
 
   const [backendAddress, setBackendAddress] = useState(null)
@@ -395,41 +399,35 @@ const App = () => {
     // Report disallowed files
     disallowedFiles.forEach(f => reportStatusMessage("Could not upload \"" + f.name + "\" - unsupported type", false))
 
-    // N.B: Content must be saved before upload
-    if (username !== null && saved) {
-      if (validFiles.length > 0) {
-        if (galleryUpload && validFiles.length > 1) {
-          if (validFiles.length > MAX_IN_GALLERY) {
-            reportStatusMessage("Cannot create gallery of more than " + MAX_IN_GALLERY + " items", false)
-            return
-          }
-          uploadUserGallery(
-            validFiles,
-            username,
-            backendAddress,
-            // progress callback
-            uploadProgressUpdate,
-            // callback
-            uploadCompleteCallback
-          )
-        } else {
-          setUploading(true)
-          setUploadPercent(0)
-          uploadUserMedia(
-            validFiles,
-            username,
-            backendAddress,
-            // progress callback
-            uploadProgressUpdate,
-            // callback
-            uploadCompleteCallback
-          )
+    // N.B: Content must be saved before upload - enforced by button disabled
+    if (validFiles.length > 0) {
+      if (galleryUpload && validFiles.length > 1) {
+        if (validFiles.length > MAX_IN_GALLERY) {
+          reportStatusMessage("Cannot create gallery of more than " + MAX_IN_GALLERY + " items", false)
+          return
         }
+        uploadUserGallery(
+          validFiles,
+          username,
+          backendAddress,
+          // progress callback
+          uploadProgressUpdate,
+          // callback
+          uploadCompleteCallback
+        )
+      } else {
+        setUploading(true)
+        setUploadPercent(0)
+        uploadUserMedia(
+          validFiles,
+          username,
+          backendAddress,
+          // progress callback
+          uploadProgressUpdate,
+          // callback
+          uploadCompleteCallback
+        )
       }
-    } else {
-      // Should never be reached as inputs are disabled in this case
-      reportStatusMessage("Something went wrong, please try again", false)
-      // N.B: uploading has not been set to true, so we do not need to set it to false here
     }
 
     // Remove any file from selection
@@ -445,12 +443,15 @@ const App = () => {
   // Prepare image upload button and functionality
   var imageUploadButton = (
     <span>
-      <button
-        id='upload-button'
+      <Button
+        className={classes.button}
+        disabled={username === null || !saved}
+        variant='contained'
+        color='primary'
         onClick={() => fileUploaderRef.current.click()}
       >
         Upload
-      </button>
+      </Button>
       <input
         type="file" multiple
         id="add-file"
