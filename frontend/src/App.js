@@ -8,16 +8,17 @@ import {
   Button,
   TextField,
   FormControl,
+  FormControlLabel,
   Select,
   MenuItem,
-  InputLabel
+  InputLabel,
+  Switch
 } from '@material-ui/core/index'
 
 import Grid from './components/grid/Grid'
 import ImageSquare from './components/imageSquare/ImageSquare'
 import StatusMessage from './components/statusMessage/StatusMessage'
 import EditPage from './components/editPage/EditPage'
-import ToggleSwitch from './components/toggleSwitch/ToggleSwitch'
 
 import useStyles from './style'
 
@@ -535,10 +536,11 @@ const App = () => {
         </span>
       </div>
       <div className='upload-status-bar'>
-        <ToggleSwitch
-          value={galleryUpload}
-          text={"Gallery upload: "}
-          onChange={checked => setGalleryUpload(checked)}
+        <FormControlLabel
+          control={
+            <Switch checked={galleryUpload} onChange={e => setGalleryUpload(e.target.checked)} />
+          }
+          label="Gallery Upload"
         />
         {imageUploadButton}
         <div className="progress-bar-container">
