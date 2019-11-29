@@ -15,6 +15,8 @@ import {
   Switch
 } from '@material-ui/core/index'
 
+import { Delete as DeleteIcon } from '@material-ui/icons'
+
 import Grid from './components/grid/Grid'
 import ImageSquare from './components/imageSquare/ImageSquare'
 import StatusMessage from './components/statusMessage/StatusMessage'
@@ -498,8 +500,8 @@ const App = () => {
             }}
           />
         </span>
-        <span className='account-select'>
-          <FormControl style={{minWidth: 120}}>
+        <div className='account-select'>
+          <FormControl style={{minWidth: 120, verticalAlign: 'bottom', }}>
             <InputLabel id='account-select-label'>Account</InputLabel>
             <Select
               value={username}
@@ -514,10 +516,9 @@ const App = () => {
               <MenuItem value='create-new'>+ New account</MenuItem>
             </Select>
           </FormControl>
-          <img
-            id='account-delete-icon'
-            src={binIcon}
+          <DeleteIcon
             alt='delete account'
+            style={{verticalAlign: 'bottom', cursor:'pointer'}}
             onClick={function() {
               if (backendAddress !== null && username !== EMPTY_USER && !uploading && editingIndex === NONE_INDEX) {
                 if (window.confirm("Are you sure you want to delete \"" + username + "\" from the organiser")) {
@@ -533,7 +534,7 @@ const App = () => {
               }
             }}
           />
-        </span>
+        </div>
       </div>
       <div className='upload-status-bar'>
         <FormControlLabel
