@@ -4,10 +4,19 @@ import './EditPage.css'
 
 import Carousel from '../carousel/Carousel.js'
 
-import crossImage from '../../images/cross.svg'
-import binImage from '../../images/bin.svg'
+import {
+  Button,
+  TextField,
+  Dialog,
+  DialogTitle
+} from '@material-ui/core/index'
 
-const EditPage = ({media, mediaType, caption, saveCaption, closePage, setGalleryItemAsGalleryHead, deleteImage}) => {
+import {
+  Delete as DeleteIcon,
+  Close as CloseIcon
+} from '@material-ui/icons'
+
+const EditPage = ({media, mediaType, caption, saveCaption, closePage, setGalleryItemAsGalleryHead, deleteImage, opened}) => {
 
   const [text, setText] = useState(caption)
 
@@ -70,33 +79,35 @@ const EditPage = ({media, mediaType, caption, saveCaption, closePage, setGallery
   }
 
   return (
-    <div className='edit-page'>
-      <img
-        src={crossImage}
-        alt='close'
-        className='exit-icon'
-        onClick={() => closePage()}
-      />
-      {generateMediaPreview(media, mediaType)}
-      <img
-        src={binImage}
-        alt='delete item'
-        className='media-delete-icon'
-        onClick={deleteImage}
-      />
-      <textarea
-        className={"caption-input-area"}
-        placeholder={"Enter a caption"}
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-      />
-      <button
-        id='save-caption-button'
-        onClick={() => saveCaption(text)}
-      >
-        Save
-      </button>
-    </div>
+    <Dialog
+      open={true /* whole component unmounted on close */}
+      onClose={closePage}
+    >
+      <div className='edit-page'>
+        <DeleteIcon
+          className='media-delete-icon'
+          onClick={deleteImage}
+        />
+        {generateMediaPreview(media, mediaType)}
+        <CloseIcon
+          className='exit-icon'
+          onClick={closePage}
+        />
+        <TextField
+          multiline
+          variant="outlined"
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+        />
+        <Button
+          variant='contained'
+          color='primary'
+          onClick={() => saveCaption(text)}
+        >
+          Save
+        </Button>
+      </div>
+    </Dialog>
   )
 }
 
