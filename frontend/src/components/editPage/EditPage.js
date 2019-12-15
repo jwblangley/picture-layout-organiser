@@ -8,7 +8,7 @@ import {
   Button,
   TextField,
   Dialog,
-  DialogTitle
+  Grid
 } from '@material-ui/core/index'
 
 import {
@@ -85,27 +85,35 @@ const EditPage = ({media, mediaType, caption, saveCaption, closePage, setGallery
     >
       <div className='edit-page'>
         <DeleteIcon
-          className='media-delete-icon'
-          onClick={deleteImage}
+        className='media-delete-icon'
+        onClick={deleteImage}
         />
-        {generateMediaPreview(media, mediaType)}
         <CloseIcon
-          className='exit-icon'
-          onClick={closePage}
+        className='exit-icon'
+        onClick={closePage}
         />
-        <TextField
-          multiline
-          variant="outlined"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-        />
-        <Button
-          variant='contained'
-          color='primary'
-          onClick={() => saveCaption(text)}
-        >
-          Save
-        </Button>
+        <Grid container xs={12} spacing={3}>
+          <Grid item xs={12}>
+            {generateMediaPreview(media, mediaType)}
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              multiline
+              variant="outlined"
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <Button
+              variant='contained'
+              color='primary'
+              onClick={() => saveCaption(text)}
+            >
+              Save
+            </Button>
+          </Grid>
+        </Grid>
       </div>
     </Dialog>
   )
