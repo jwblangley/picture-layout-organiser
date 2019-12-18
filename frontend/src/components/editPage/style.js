@@ -54,8 +54,6 @@ const useStyles = makeStyles(theme => ({
       border: 'solid 0.1vmin black',
       backgroundPosition: '50% 50%',
       backgroundSize: 'cover',
-      // TODO: color
-      // backgroundColor: var(--color-gray-light),
       margin: 'auto'
     },
     videoPreview: {

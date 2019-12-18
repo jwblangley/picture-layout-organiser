@@ -539,7 +539,11 @@ const App = () => {
       <div className='upload-status-bar'>
         <FormControlLabel
           control={
-            <Switch checked={galleryUpload} onChange={e => setGalleryUpload(e.target.checked)} />
+            <Switch
+              checked={galleryUpload}
+              onChange={e => setGalleryUpload(e.target.checked)}
+              color='primary'
+            />
           }
           label="Gallery Upload"
         />
