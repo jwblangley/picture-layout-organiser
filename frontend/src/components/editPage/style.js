@@ -27,17 +27,11 @@ const useStyles = makeStyles(theme => ({
       justifyContent: 'center'
     },
     editPage: {
-      position: 'fixed',
-      height: '90vmin',
-      width: '60vmin',
-      top: 'calc((100vh - 90vmin) / 2)',
-      left: 'calc((100vw - 60vmin) / 2)',
-      backgroundColor: 'white',
+      backgroundColor: theme.palette.background.paper,
       padding: '3vmin',
       zIndex: '5',
       border: 'solid 0.1vmin black',
       textAlign: 'center',
-      overflowY: 'scroll'
     },
     exitIcon: {
       width: '1.5rem',
