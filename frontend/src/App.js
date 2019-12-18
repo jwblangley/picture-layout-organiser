@@ -13,12 +13,13 @@ import {
   Select,
   MenuItem,
   InputLabel,
-  Switch
+  Switch,
+  Grid
 } from '@material-ui/core/index'
 
 import { Delete as DeleteIcon } from '@material-ui/icons'
 
-import Grid from './components/grid/Grid'
+import GridBlock from './components/gridBlock/GridBlock'
 import ImageSquare from './components/imageSquare/ImageSquare'
 import StatusMessage from './components/statusMessage/StatusMessage'
 import EditPage from './components/editPage/EditPage'
@@ -472,6 +473,7 @@ const App = () => {
   var topBar = (
     <div className={classes.topBar}>
       <div className={classes.adminBar}>
+
         <span className={classes.backendAddressInput}>
           <TextField
             className={classes.textField}
@@ -588,7 +590,7 @@ const App = () => {
   var gridContent = (
     <div id='main-grid' className='App' style={{'display': uploading ? 'none' : 'table'}}>
       <h2>{saved ? "Content is saved and up-to-date" : "Saving"}</h2>
-      <Grid
+      <GridBlock
         cols={NUM_COLS}
         gridContent={content.map((c, index) => (
           <ImageSquare

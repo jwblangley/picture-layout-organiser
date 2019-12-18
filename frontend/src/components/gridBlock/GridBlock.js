@@ -1,6 +1,6 @@
 import React from 'react'
 
-import './Grid.css'
+import './GridBlock.css'
 
 const Grid = ({gridContent, cols}) => {
 
