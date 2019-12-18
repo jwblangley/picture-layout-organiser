@@ -27,8 +27,6 @@ import useStyles from './style'
 import arraySwap from './ArraySwap'
 import partition from './Partition'
 
-import binIcon from './images/bin.svg'
-
 import {
   getFormattedAddress,
   listUsers,

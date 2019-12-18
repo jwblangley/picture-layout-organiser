@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 
-import './EditPage.css'
+import useStyles from './style'
 
 import Carousel from '../carousel/Carousel.js'
 
@@ -18,12 +18,14 @@ import {
 
 const EditPage = ({media, mediaType, caption, saveCaption, closePage, setGalleryItemAsGalleryHead, deleteImage, opened}) => {
 
+  const classes = useStyles()
+
   const [text, setText] = useState(caption)
 
   function generateMediaPreview(media, mediaType) {
     if (mediaType === 'video') {
       return (
-        <video className="video-preview" controls>
+        <video className={classes.videoPreview} controls>
           <source src={media} type="video/mp4" />
           Your browser does not support the video tag.
         </video>
@@ -47,7 +49,7 @@ const EditPage = ({media, mediaType, caption, saveCaption, closePage, setGallery
       return (
         <div
           style={backgroundImageStyle}
-          className='image-preview'
+          className={classes.imagePreview}
         ></div>
       )
     }
@@ -56,7 +58,7 @@ const EditPage = ({media, mediaType, caption, saveCaption, closePage, setGallery
 
   function generateGalleryItemWrapper(itemPreview, itemIndex) {
     return (
-      <div className='gallery-item-wrapper'>
+      <div className={classes.galleryItemWrapper}>
         {
           itemIndex === 0 &&
           (
@@ -83,16 +85,16 @@ const EditPage = ({media, mediaType, caption, saveCaption, closePage, setGallery
       open={true /* whole component unmounted on close */}
       onClose={closePage}
     >
-      <div className='edit-page'>
+      <div className={classes.editPage}>
         <DeleteIcon
-        className='media-delete-icon'
-        onClick={deleteImage}
+          className={classes.mediaDeleteIcon}
+          onClick={deleteImage}
         />
         <CloseIcon
-        className='exit-icon'
-        onClick={closePage}
+          className={classes.exitIcon}
+          onClick={closePage}
         />
-        <Grid container xs={12} spacing={3}>
+        <Grid container spacing={3}>
           <Grid item xs={12}>
             {generateMediaPreview(media, mediaType)}
           </Grid>
