@@ -1,7 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react'
 import axios from 'axios'
 
-import './App.css'
 import { ThemeProvider } from '@material-ui/core/styles';
 import theme from './theme'
 
@@ -103,7 +102,6 @@ function downloadUrl(url) {
 
 const App = () => {
   const classes = useStyles()
-
 
   const [backendAddress, setBackendAddress] = useState(null)
   const [imageHostAddress, setImageHostAddress] = useState(null)
@@ -472,9 +470,9 @@ const App = () => {
   )
 
   var topBar = (
-    <div className="top-bar">
-      <div className="admin-bar">
-        <span className="backend-address-input">
+    <div className={classes.topBar}>
+      <div className={classes.adminBar}>
+        <span className={classes.backendAddressInput}>
           <TextField
             className={classes.textField}
             label="Backend address"
@@ -500,7 +498,7 @@ const App = () => {
             }}
           />
         </span>
-        <div className='account-select'>
+        <div className={classes.accountSelect}>
           <FormControl style={{minWidth: 120, verticalAlign: 'bottom', }}>
             <InputLabel id='account-select-label'>Account</InputLabel>
             <Select
@@ -536,7 +534,7 @@ const App = () => {
           />
         </div>
       </div>
-      <div className='upload-status-bar'>
+      <div className={classes.uploadStatusBar}>
         <FormControlLabel
           control={
             <Switch
@@ -548,11 +546,11 @@ const App = () => {
           label="Gallery Upload"
         />
         {imageUploadButton}
-        <div className="progress-bar-container">
+        <div className={classes.progressBarContainer}>
           <Progress max="100" color="success" striped value={uploadPercent}>{Math.round(uploadPercent, 2)}%</Progress>
         </div>
       </div>
-      <div className='download-button'>
+      <div className={classes.downloadButton}>
         <Button
           className={classes.button}
           variant='contained'
@@ -570,7 +568,7 @@ const App = () => {
           {selectedIndex === NONE_INDEX ? 'Download latest and lock' : ' Download selected'}
         </Button>
       </div>
-      <div className='status-message-container'>
+      <div className={classes.statusMessageContainer}>
         {statusMessages.map((message, index) =>
           <StatusMessage
             key={index}
@@ -635,16 +633,16 @@ const App = () => {
 
   // Content to render when there is no grid to show (no account selected)
   var noGridContent = (
-    <div className='empty-content'>
+    <div className={classes.emptyContent}>
       Please connect backend and select an account
     </div>
   )
 
   return (
     <ThemeProvider theme={theme}>
-      <div>
+      <div className={classes.root}>
         {topBar}
-        <div className='page-content'>
+        <div className={classes.pageContent}>
 
           {
             (backendAddress !== null && username !== EMPTY_USER)
