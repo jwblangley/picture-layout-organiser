@@ -2,6 +2,8 @@ import React, {useState, useEffect, useRef} from 'react'
 import axios from 'axios'
 
 import './App.css'
+import { ThemeProvider } from '@material-ui/core/styles';
+import theme from './theme'
 
 import {Progress} from 'reactstrap'
 import {
@@ -635,58 +637,60 @@ const App = () => {
   )
 
   return (
-    <div>
-      {topBar}
-      <div className='page-content'>
+    <ThemeProvider theme={theme}>
+      <div>
+        {topBar}
+        <div className='page-content'>
 
-        {
-          (backendAddress !== null && username !== EMPTY_USER)
-            ? gridContent
-            : noGridContent
-        }
+          {
+            (backendAddress !== null && username !== EMPTY_USER)
+              ? gridContent
+              : noGridContent
+          }
 
-        {
-          editingIndex !== NONE_INDEX &&
-          <EditPage
-            caption={content[editingIndex].caption}
-            media={content[editingIndex].media}
-            mediaType={content[editingIndex].mediaType}
-            closePage={() => setEditingIndex(NONE_INDEX)}
-            saveCaption={text => saveCaption(text, editingIndex)}
-            deleteImage={function() {
-              if (window.confirm("Delete image?")) {
-                deleteImage(editingIndex)
-                setEditingIndex(NONE_INDEX)
-              }
-            }}
-            setGalleryItemAsGalleryHead={function(itemIndex) {
-              // Get old items
-              var newContent = [...content]
-              var selectedGallery = newContent[editingIndex]
-              var galleryMedia = selectedGallery.media
-              var toHead = galleryMedia[itemIndex]
+          {
+            editingIndex !== NONE_INDEX &&
+            <EditPage
+              caption={content[editingIndex].caption}
+              media={content[editingIndex].media}
+              mediaType={content[editingIndex].mediaType}
+              closePage={() => setEditingIndex(NONE_INDEX)}
+              saveCaption={text => saveCaption(text, editingIndex)}
+              deleteImage={function() {
+                if (window.confirm("Delete image?")) {
+                  deleteImage(editingIndex)
+                  setEditingIndex(NONE_INDEX)
+                }
+              }}
+              setGalleryItemAsGalleryHead={function(itemIndex) {
+                // Get old items
+                var newContent = [...content]
+                var selectedGallery = newContent[editingIndex]
+                var galleryMedia = selectedGallery.media
+                var toHead = galleryMedia[itemIndex]
 
-              // Delete 1 item at index, itemIndex - remove item from original place in list
-              galleryMedia.splice(itemIndex, 1)
-              // Move item to head of list
-              galleryMedia = [toHead, ...galleryMedia]
+                // Delete 1 item at index, itemIndex - remove item from original place in list
+                galleryMedia.splice(itemIndex, 1)
+                // Move item to head of list
+                galleryMedia = [toHead, ...galleryMedia]
 
-              // Build new items
-              selectedGallery.media = galleryMedia
-              newContent[editingIndex] = selectedGallery
+                // Build new items
+                selectedGallery.media = galleryMedia
+                newContent[editingIndex] = selectedGallery
 
-              // Set state and save
-              setContent(newContent)
-              delayedSaveAfterLastEdit(newContent)
+                // Set state and save
+                setContent(newContent)
+                delayedSaveAfterLastEdit(newContent)
 
-              //TODO: Relplace with better system (use refs?)
-              // Scroll to gallery head
-              document.getElementById("gallery-preview-head").scrollIntoView()
-            }}
-          />
-        }
+                //TODO: Relplace with better system (use refs?)
+                // Scroll to gallery head
+                document.getElementById("gallery-preview-head").scrollIntoView()
+              }}
+            />
+          }
+        </div>
       </div>
-    </div>
+    </ThemeProvider>
   )
 }
 
