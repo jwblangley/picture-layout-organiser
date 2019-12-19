@@ -14,7 +14,8 @@ import {
   MenuItem,
   InputLabel,
   Switch,
-  Grid
+  Grid,
+  Container
 } from '@material-ui/core/index'
 
 import { Delete as DeleteIcon } from '@material-ui/icons'
@@ -472,10 +473,10 @@ const App = () => {
 
   var topBar = (
     <div className={classes.topBar}>
-      <div className={classes.adminBar}>
-
-        <span className={classes.backendAddressInput}>
+      <Grid container className={classes.adminBar}>
+        <Grid item>
           <TextField
+            style={{width:'auto'}}
             className={classes.textField}
             label="Backend address"
             disabled={uploading || editingIndex !== NONE_INDEX}
@@ -499,8 +500,8 @@ const App = () => {
               deselectSelectedItem()
             }}
           />
-        </span>
-        <div className={classes.accountSelect}>
+        </Grid>
+        <Grid item style={{marginLeft:8}}>
           <FormControl style={{minWidth: 120, verticalAlign: 'bottom', }}>
             <InputLabel id='account-select-label'>Account</InputLabel>
             <Select
@@ -534,42 +535,47 @@ const App = () => {
               }
             }}
           />
-        </div>
-      </div>
-      <div className={classes.uploadStatusBar}>
-        <FormControlLabel
-          control={
-            <Switch
-              checked={galleryUpload}
-              onChange={e => setGalleryUpload(e.target.checked)}
-              color='primary'
-            />
-          }
-          label="Gallery Upload"
-        />
-        {imageUploadButton}
-        <div className={classes.progressBarContainer}>
-          <Progress max="100" color="success" striped value={uploadPercent}>{Math.round(uploadPercent, 2)}%</Progress>
-        </div>
-      </div>
-      <div className={classes.downloadButton}>
-        <Button
-          className={classes.button}
-          variant='contained'
-          color='primary'
-          disabled={uploading || editingIndex !== NONE_INDEX || username === EMPTY_USER || backendAddress === null }
-          onClick={function() {
-            var toDownloadIndex = selectedIndex === NONE_INDEX ? getNextDownloadIndex() : selectedIndex
-            if (toDownloadIndex === -1) {
-              reportStatusMessage("No next item available", false)
-              return
+        </Grid>
+      </Grid>
+      <Grid container justify='center' spacing={3}>
+        <Grid item>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={galleryUpload}
+                onChange={e => setGalleryUpload(e.target.checked)}
+                color='primary'
+              />
             }
-            saveContentItemToDevice(toDownloadIndex, selectedIndex === NONE_INDEX)
-          }}
-        >
-          {selectedIndex === NONE_INDEX ? 'Download latest and lock' : ' Download selected'}
-        </Button>
-      </div>
+            label="Gallery Upload"
+          />
+        </Grid>
+        <Grid item>
+          {imageUploadButton}
+        </Grid>
+        <Grid item xs={11}>
+          <Progress max="100" color="success" striped value={uploadPercent}>{Math.round(uploadPercent, 2)}%</Progress>
+        </Grid>
+        <Grid item>
+          <Button
+            className={classes.button}
+            variant='contained'
+            color='primary'
+            disabled={uploading || editingIndex !== NONE_INDEX || username === EMPTY_USER || backendAddress === null }
+            onClick={function() {
+              var toDownloadIndex = selectedIndex === NONE_INDEX ? getNextDownloadIndex() : selectedIndex
+              if (toDownloadIndex === -1) {
+                reportStatusMessage("No next item available", false)
+                return
+              }
+              saveContentItemToDevice(toDownloadIndex, selectedIndex === NONE_INDEX)
+            }}
+          >
+            {selectedIndex === NONE_INDEX ? 'Download latest and lock' : ' Download selected'}
+          </Button>
+        </Grid>
+      </Grid>
+
       <div className={classes.statusMessageContainer}>
         {statusMessages.map((message, index) =>
           <StatusMessage
