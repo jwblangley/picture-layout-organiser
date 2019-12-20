@@ -1,5 +1,6 @@
 import React from 'react'
-import './ImageSquare.css'
+
+import useStyles from './style'
 
 import ringCircle from '../../images/ring-circle.svg'
 import padlock from '../../images/padlock.svg'
@@ -9,6 +10,8 @@ import videoIcon from '../../images/video.svg'
 import galleryIcon from '../../images/gallery.svg'
 
 const ImageSquare = ({media, mediaType, thumbnail, selected, locked, captioned, toggleLock, handleClick, handleEditClick}) => {
+
+  const classes = useStyles()
 
   function generateBackgroundImageStyle(media, mediaType, thumbnail) {
     // Decide backround image for ImageSquare
@@ -30,12 +33,11 @@ const ImageSquare = ({media, mediaType, thumbnail, selected, locked, captioned, 
 
 
   var backgroundImageStyle = generateBackgroundImageStyle(media, mediaType, thumbnail)
-  var classString = 'image-square' + (selected ? ' selected' : '')
 
   return (
     <div
-      className={classString}
-      style={backgroundImageStyle}
+      className={classes.imageSquare}
+      style={{...backgroundImageStyle, opacity: selected ? 0.35 : 1}}
       onClick={handleClick}
     >
       {
@@ -47,14 +49,14 @@ const ImageSquare = ({media, mediaType, thumbnail, selected, locked, captioned, 
       <img
         src={locked ? padlock : ringCircle}
         alt={locked ? 'locked': 'unlocked'}
-        className='lock-ring clickable icon'
+        className={`${classes.lockRing} ${classes.clickable} ${classes.icon}`}
         onClick={toggleLock}
       />
-      {locked ? null :
+      {locked ? <div /> :
         (<img
           src={pencil}
           alt='edit'
-          className='edit-icon clickable icon'
+          className={`${classes.editIcon} ${classes.clickable} ${classes.icon}`}
           onClick={handleEditClick}
         />)
       }
@@ -62,14 +64,14 @@ const ImageSquare = ({media, mediaType, thumbnail, selected, locked, captioned, 
         (<img
           src={captionedIcon}
           alt='captioned'
-          className='captioned-icon icon'
+          className={`${classes.captionedIcon} ${classes.icon}`}
         />)
       }
       {mediaType !== 'image' && !locked &&
         (<img
           src={mediaType === 'video' ? videoIcon: galleryIcon}
           alt={mediaType}
-          className='media-type-icon icon'
+          className={`${classes.mediaTypeIcon} ${classes.icon}`}
         />)
       }
     </div>
