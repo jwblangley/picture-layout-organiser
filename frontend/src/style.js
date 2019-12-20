@@ -15,12 +15,16 @@ const useStyles = makeStyles(theme =>
         position: 'sticky',
         top: 0,
         zIndex: 5,
-        marginBottom: theme.spacing(2)
+        marginBottom: theme.spacing(2),
+        backgroundColor: theme.palette.background.default
       },
       adminBar: {
         backgroundColor: theme.palette.primary.light,
         padding: theme.spacing(2),
         marginBottom: theme.spacing(2)
+      },
+      gridContent: {
+        textAlign: 'center'
       }
     })
 )
