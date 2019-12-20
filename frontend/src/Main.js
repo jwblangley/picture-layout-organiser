@@ -15,7 +15,10 @@ import {
   Switch,
   Grid,
   Container,
-  Typography
+  Typography,
+  Paper,
+  GridList,
+  GridListTile
 } from '@material-ui/core/index'
 
 import { Delete as DeleteIcon } from '@material-ui/icons'
@@ -589,52 +592,61 @@ const App = () => {
     </div>
   )
 
-  // Prepare main gridContent for display when appropriate
   // N.B: hide content whilst uploading to prevent race conditions
   var gridContent = (
-    <div style={{'display': uploading ? 'none' : 'table'}}>
-      <Typography variant='h2'>{saved ? "Content is saved and up-to-date" : "Saving"}</Typography>
-      <GridBlock
-        cols={NUM_COLS}
-        gridContent={content.map((c, index) => (
-          <ImageSquare
-            media={c.media}
-            mediaType={c.mediaType}
-            captioned={c.caption !== ''}
-            thumbnail={c.thumbnail}
-            selected={selectedIndex === index}
-            locked={c.locked}
-            toggleLock={function(e) {
-              // Disabled when editing - otherwise lock up to here
-              e.stopPropagation()
-              if (editingIndex === NONE_INDEX) {
-                lockContentAfterIndex(index)
-              }
-            }}
-            handleClick={function() {
-              // Disabled when editing, else if not locked, select item
-              if (editingIndex === NONE_INDEX) {
-                if (!isContentLocked(index)) {
-                  if (selectedIndex === index) {
-                    deselectSelectedItem()
-                  } else {
-                    setSelectedIndex(index)
+    <Container
+      className={classes.gridContent}
+      style={{'display': uploading ? 'none' : 'block'}}
+    >
+      <Paper>
+        <Typography variant='h5'>{saved ? "Content is saved and up-to-date" : "Saving"}</Typography>
+        <GridList
+          cols={NUM_COLS}
+          spacing={2}
+          cellHeight='auto'
+        >
+          {content.map((c, index) => (
+            <GridListTile key={index} cols={1}>
+              <ImageSquare
+                media={c.media}
+                mediaType={c.mediaType}
+                captioned={c.caption !== ''}
+                thumbnail={c.thumbnail}
+                selected={selectedIndex === index}
+                locked={c.locked}
+                toggleLock={function(e) {
+                  // Disabled when editing - otherwise lock up to here
+                  e.stopPropagation()
+                  if (editingIndex === NONE_INDEX) {
+                    lockContentAfterIndex(index)
                   }
-                }
-              }
-            }}
-            handleEditClick={function(e) {
-              // If not editing something else, choose this for editing
-              e.stopPropagation()
-              if (editingIndex === NONE_INDEX) {
-                setEditingIndex(index)
-                setSelectedIndex(NONE_INDEX)
-              }
-            }}
-          />
-        ))}
-      />
-    </div>
+                }}
+                handleClick={function() {
+                  // Disabled when editing, else if not locked, select item
+                  if (editingIndex === NONE_INDEX) {
+                    if (!isContentLocked(index)) {
+                      if (selectedIndex === index) {
+                        deselectSelectedItem()
+                      } else {
+                        setSelectedIndex(index)
+                      }
+                    }
+                  }
+                }}
+                handleEditClick={function(e) {
+                  // If not editing something else, choose this for editing
+                  e.stopPropagation()
+                  if (editingIndex === NONE_INDEX) {
+                    setEditingIndex(index)
+                    setSelectedIndex(NONE_INDEX)
+                  }
+                }}
+              />
+            </GridListTile>
+          ))}
+        </GridList>
+      </Paper>
+    </Container>
   )
 
   // Content to render when there is no grid to show (no account selected)
