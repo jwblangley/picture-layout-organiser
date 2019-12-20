@@ -451,7 +451,7 @@ const App = () => {
     <span>
       <Button
         className={classes.button}
-        disabled={username === EMPTY_USER || !saved}
+        disabled={username === EMPTY_USER || !saved || uploading}
         variant='contained'
         color='primary'
         onClick={() => fileUploaderRef.current.click()}
@@ -559,7 +559,7 @@ const App = () => {
             className={classes.button}
             variant='contained'
             color='primary'
-            disabled={uploading || editingIndex !== NONE_INDEX || username === EMPTY_USER || backendAddress === null }
+            disabled={uploading || !saved || editingIndex !== NONE_INDEX || username === EMPTY_USER || backendAddress === null}
             onClick={function() {
               var toDownloadIndex = selectedIndex === NONE_INDEX ? getNextDownloadIndex() : selectedIndex
               if (toDownloadIndex === -1) {
