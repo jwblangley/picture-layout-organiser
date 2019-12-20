@@ -3,8 +3,8 @@ import { makeStyles } from '@material-ui/core/index'
 const useStyles = makeStyles(theme => ({
   imageSquare: {
     display: 'inline-block',
-    width: '15vw',
-    height: '15vw',
+    width: '28vmin',
+    height: '28vmin',
     overflow: 'hidden',
     border: '1px solid black',
     backgroundPosition: '50% 50%',
