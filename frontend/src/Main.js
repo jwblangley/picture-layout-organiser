@@ -573,7 +573,7 @@ const App = () => {
         </Grid>
       </Grid>
 
-      <div className={classes.statusMessageContainer}>
+      <div>
         {statusMessages.map((message, index) =>
           <StatusMessage
             key={index}
@@ -638,7 +638,7 @@ const App = () => {
 
   // Content to render when there is no grid to show (no account selected)
   var noGridContent = (
-    <div className={classes.emptyContent}>
+    <div>
       Please connect backend and select an account
     </div>
   )
@@ -646,7 +646,7 @@ const App = () => {
   return (
     <div>
       {topBar}
-      <div className={classes.pageContent}>
+      <div>
 
         {
           (backendAddress !== null && username !== EMPTY_USER)
