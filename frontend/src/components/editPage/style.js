@@ -72,6 +72,9 @@ const useStyles = makeStyles(theme => ({
     saveCaptionButton: {
       width: '52vmin',
       marginTop: '1vmin'
+    },
+    makeFirstButton: {
+      marginTop: theme.spacing(1)
     }
 }))
 

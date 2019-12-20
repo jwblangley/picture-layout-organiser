@@ -690,10 +690,6 @@ const App = () => {
               // Set state and save
               setContent(newContent)
               delayedSaveAfterLastEdit(newContent)
-
-              //TODO: Relplace with better system (use refs?)
-              // Scroll to gallery head
-              document.getElementById("gallery-preview-head").scrollIntoView()
             }}
           />
         }

@@ -59,21 +59,18 @@ const EditPage = ({media, mediaType, caption, saveCaption, closePage, setGallery
   function generateGalleryItemWrapper(itemPreview, itemIndex) {
     return (
       <div className={classes.galleryItemWrapper}>
-        {
-          itemIndex === 0 &&
-          (
-            <a id='gallery-preview-head' />
-          )
-        }
         {itemPreview}
         {
           itemIndex > 0 &&
           (
-            <button
+            <Button
+              className={classes.makeFirstButton}
+              variant='contained'
+              color='primary'
               onClick={() => setGalleryItemAsGalleryHead(itemIndex)}
             >
               Make first
-            </button>
+            </Button>
           )
         }
       </div>
@@ -101,7 +98,8 @@ const EditPage = ({media, mediaType, caption, saveCaption, closePage, setGallery
           <Grid item xs={12}>
             <TextField
               multiline
-              variant="outlined"
+              variant='outlined'
+              placeholder='Caption'
               value={text}
               onChange={(e) => setText(e.target.value)}
             />

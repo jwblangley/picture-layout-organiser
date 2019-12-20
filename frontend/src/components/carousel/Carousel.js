@@ -1,27 +1,35 @@
 import React from 'react'
 
-import './Carousel.css'
+import useStyles from './style'
+
+import {
+  Typography
+} from '@material-ui/core/index'
 
 const Recipe = ({slides, stringIfEmpty}) => {
 
+  const classes = useStyles()
+
   return (
-    <div className='carousel'>
+    <div className={classes.carousel}>
       {
         slides.length > 0 ?
           slides
           .map((slide, i) => <Slide content={slide} key={i} />)
         :
-          <div className='warning-message'>
-            <h2>{stringIfEmpty}</h2>
-          </div>
+          <Typography className={classes.warningMessage}>
+            {stringIfEmpty}
+          </Typography>
       }
     </div>
   )
 }
 
 export function Slide(props){
+  const classes = useStyles()
+
   return(
-    <div className='carousel-slide'>
+    <div className={classes.carouselSlide}>
       {props.content}
     </div>
   )
