@@ -1,16 +1,31 @@
 import React from 'react'
 
-import './StatusMessage.css'
+import useStyles from './style'
 
-import crossImage from '../../images/cross.svg'
+import { Close as CloseIcon } from '@material-ui/icons'
+import {
+  Paper,
+  Typography,
+  Grid
+} from '@material-ui/core'
 
 const StatusMessage = ({text, positive, handleDismiss}) => {
 
+  const classes = useStyles()
+
   return (
-    <div className={'status-message ' + (positive ? 'positive': 'negative')}>
-      {text}
-      <img className='dismiss-icon' alt='dismiss' src={crossImage} onClick={handleDismiss} />
-    </div>
+    <Paper className={classes.statusMessage}>
+      <Grid container>
+        <Grid item xs={11}>
+          <Typography className={positive ? classes.positive : classes.negative}>
+            {text}
+          </Typography>
+        </Grid>
+        <Grid item xs={1}>
+          <CloseIcon className={classes.dismissIcon} onClick={handleDismiss} />
+        </Grid>
+      </Grid>
+    </Paper>
   )
 }
 
