@@ -14,7 +14,8 @@ import {
   InputLabel,
   Switch,
   Grid,
-  Container
+  Container,
+  Typography
 } from '@material-ui/core/index'
 
 import { Delete as DeleteIcon } from '@material-ui/icons'
@@ -573,7 +574,7 @@ const App = () => {
         </Grid>
       </Grid>
 
-      <div>
+      <Container>
         {statusMessages.map((message, index) =>
           <StatusMessage
             key={index}
@@ -584,15 +585,15 @@ const App = () => {
             }}
           />
         )}
-      </div>
+      </Container>
     </div>
   )
 
   // Prepare main gridContent for display when appropriate
   // N.B: hide content whilst uploading to prevent race conditions
   var gridContent = (
-    <div id='main-grid' className='App' style={{'display': uploading ? 'none' : 'table'}}>
-      <h2>{saved ? "Content is saved and up-to-date" : "Saving"}</h2>
+    <div style={{'display': uploading ? 'none' : 'table'}}>
+      <Typography variant='h2'>{saved ? "Content is saved and up-to-date" : "Saving"}</Typography>
       <GridBlock
         cols={NUM_COLS}
         gridContent={content.map((c, index) => (
@@ -638,9 +639,11 @@ const App = () => {
 
   // Content to render when there is no grid to show (no account selected)
   var noGridContent = (
-    <div>
-      Please connect backend and select an account
-    </div>
+    <Container>
+      <Typography align='center'>
+        Please connect backend and select an account
+      </Typography>
+    </Container>
   )
 
   return (

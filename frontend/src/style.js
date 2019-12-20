@@ -14,12 +14,13 @@ const useStyles = makeStyles(theme =>
         width: '100%',
         position: 'sticky',
         top: 0,
-        zIndex: 5
+        zIndex: 5,
+        marginBottom: theme.spacing(2)
       },
       adminBar: {
         backgroundColor: theme.palette.primary.light,
-        padding: '2vmin',
-        marginBottom: '2vmin'
+        padding: theme.spacing(2),
+        marginBottom: theme.spacing(2)
       }
     })
 )
