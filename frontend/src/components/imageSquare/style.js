@@ -3,8 +3,8 @@ import { makeStyles } from '@material-ui/core/index'
 const useStyles = makeStyles(theme => ({
   imageSquare: {
     display: 'inline-block',
-    width: '28vmin',
-    height: '28vmin',
+    width: '100%',
+    paddingTop: '100%',
     overflow: 'hidden',
     border: '1px solid black',
     backgroundPosition: '50% 50%',
@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
   },
   icon: {
     margin: theme.spacing(1),
-    width: '15%'
+    width: '10%'
   },
   clickable: {
     '&:hover': {
@@ -23,10 +23,13 @@ const useStyles = makeStyles(theme => ({
   },
   lockRing: {
     position: 'absolute',
+    top: 0,
     right: 0
   },
   editIcon: {
-    display: 'block'
+    position: 'absolute',
+    top: 0,
+    left: 0
   },
   mediaTypeIcon: {
     position: 'absolute',

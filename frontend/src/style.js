@@ -24,7 +24,15 @@ const useStyles = makeStyles(theme =>
         marginBottom: theme.spacing(2)
       },
       gridContent: {
-        textAlign: 'center'
+        textAlign: 'center',
+        width: '80%',
+        fontSize: 0
+      },
+      gridPaper: {
+        padding: theme.spacing(2)
+      },
+      statusText: {
+        marginBottom: theme.spacing(2)
       }
     })
 )

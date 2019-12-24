@@ -23,7 +23,6 @@ import {
 
 import { Delete as DeleteIcon } from '@material-ui/icons'
 
-import GridBlock from './components/gridBlock/GridBlock'
 import ImageSquare from './components/imageSquare/ImageSquare'
 import StatusMessage from './components/statusMessage/StatusMessage'
 import EditPage from './components/editPage/EditPage'
@@ -598,12 +597,17 @@ const App = () => {
       className={classes.gridContent}
       style={{'display': uploading ? 'none' : 'block'}}
     >
-      <Paper>
-        <Typography variant='h5'>{saved ? "Content is saved and up-to-date" : "Saving"}</Typography>
+      <Paper className={classes.gridPaper}>
+        <Typography
+          variant='h5'
+          className={classes.statusText}
+        >
+          {saved ? "Content is saved and up-to-date" : "Saving"}
+        </Typography>
         <GridList
           cols={NUM_COLS}
-          spacing={2}
           cellHeight='auto'
+          spacing={0}
         >
           {content.map((c, index) => (
             <GridListTile key={index} cols={1}>
