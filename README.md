@@ -1,4 +1,10 @@
-# About
+![](https://img.shields.io/badge/docker-compose-blue)
+![](https://img.shields.io/badge/mongodb-%20-green)
+![](https://img.shields.io/badge/node-js-blue)
+![](https://img.shields.io/badge/express-js-black)
+![](https://img.shields.io/badge/full-stack-black)
+
+# Picture Layout Organiser
 
 A picture organiser for grid layouts such as [Instagram](https://instagram.com).
 
