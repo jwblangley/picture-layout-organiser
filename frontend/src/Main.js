@@ -43,9 +43,7 @@ import {
 
 require('dotenv').config()
 
-const SELF_BACKEND = process.env.REACT_APP_SELF_BACKEND === 'true'
-
-const HOSTNAME = window.location.hostname
+const BACKEND_LOCATION = process.env.REACT_APP_BACKEND_LOCATION
 
 const NUM_COLS = 3
 const MAX_IN_GALLERY = 10
@@ -109,12 +107,12 @@ function downloadUrl(url) {
 const Main = (enqueueSnackbar) => {
   const classes = useStyles()
 
-  const autoHosts = getHosts(HOSTNAME)
+  const hosts = getHosts(BACKEND_LOCATION)
 
   const addSnackbar = enqueueSnackbar.enqueueSnackbar
 
-  const [backendAddress, setBackendAddress] = useState(SELF_BACKEND ? autoHosts.backend : null)
-  const [imageHostAddress, setImageHostAddress] = useState(SELF_BACKEND ? autoHosts.imageHost : null)
+  const [backendAddress, setBackendAddress] = useState(hosts.backend)
+  const [imageHostAddress, setImageHostAddress] = useState(hosts.imageHost)
   const [users, setUsers] = useState([])
   const [selectedIndex, setSelectedIndex] = useState(NONE_INDEX)
   const [editingIndex, setEditingIndex] = useState(NONE_INDEX)
@@ -225,12 +223,10 @@ const Main = (enqueueSnackbar) => {
   // ==========================================================================
 
   useEffect(() => {
-    if (SELF_BACKEND) {
-      // Populate state with list of users
-      listUsers(backendAddress, users => {
-        setUsers(users)
-      })
-    }
+    // Populate state with list of users
+    listUsers(backendAddress, users => {
+      setUsers(users)
+    })
 
     document.addEventListener("keydown", handleKeyDown, false)
     return () => document.removeEventListener("keydown", handleKeyDown, false)
@@ -505,33 +501,6 @@ const Main = (enqueueSnackbar) => {
   var topBar = (
     <div className={classes.topBar}>
       <Grid container className={classes.adminBar}>
-        { SELF_BACKEND ? <div></div> :
-          <Grid item>
-            <TextField
-              style={{width:'auto'}}
-              className={classes.textField}
-              label="Backend address"
-              disabled={uploading || editingIndex !== NONE_INDEX}
-              onKeyDown={
-                function(e){
-                  if (e.keyCode === ENTER_KEY) {
-                    const hosts = getHosts(e.target.value)
-                    setBackendAddress(hosts.backend)
-                    setImageHostAddress(hosts.imageHost)
-
-                    // Populate state with list of users
-                    listUsers(hosts.backend, users => {
-                      setUsers(users)
-                    })
-                  }
-                }}
-                onFocus={function(e){
-                  // Deselect item on focus so that arrow key events only affect the input
-                  deselectSelectedItem()
-                }}
-              />
-          </Grid>
-        }
         <Grid item style={{marginLeft:8}}>
           <FormControl style={{minWidth: 120, verticalAlign: 'bottom', }}>
             <InputLabel id='account-select-label'>Account</InputLabel>
@@ -608,8 +577,6 @@ const Main = (enqueueSnackbar) => {
       </Grid>
     </div>
   )
-
-  console.log(content);
 
   // N.B: hide content whilst uploading to prevent race conditions
   var gridContent = (

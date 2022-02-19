@@ -30,34 +30,25 @@ Features include:
 <br /><br />
 <img src="screenshots/uploaded.png" />
 
-# Production launch
-1. Configure the application following the [frontend](#front-config) and [backend](#back-config) configuration steps.
-
-2. Run the following:
-
-  ```
-  npm install --prefix frontend
-  npm install --prefix backend
-  bash launch.sh
-  ```
-
-  N.B: The launch script requires `tmux` to be installed.
-
-  The frontend and backend will now be run in detached tmux sessions. You can reattach them with `tmux a -t plo-frontend` and `tmux a -t plo-backend` respectively.
-
 # Backend
 
 <a name="back-config"></a>
+
 ## Configuration
 
-Edit the file `backend/run.sh` to change the data directory location - this is where all uploaded media content will be stored. By default this is the folder `.plo` in the home directory
+1. Ensure requirements are met: `bash` and `ffmpeg` are required. `mongo` needs to be set up, either locally or a remote instance.
 
-If required edit the port number in `run.sh`; the default is 8008. This should match the port number entered in the frontend config.
+    * If hosting mongo locally, ensure that the mongo data store path is set.
+    This can be done with `mongod --dbpath <location>`. It is recommended to use `/data/db`.
 
-* Requires `bash`, `ffmpeg`  and `mongo` to be installed.
-* Ensure that the mongo data store path is set. This can be done with `mongod --dbpath <location>`. It is recommended to use `/data/db`.
+1. Set the environment variable, `DATA_DIRECTORY`, to change the data directory location - this is where all uploaded media content will be stored.
+By default this is the folder `.plo` in the home directory
 
-<hr>
+1. Set the environment variable, `PORT_BASE`, to the first of two consecutive ports that will be used for the backend API.
+The default is `8008`.
+
+1. Set the environment variable, `MONGODB_LOCATION`, to the location of the mongodb instance being used.
+The default is `127.0.0.1:27017`.
 
 ## Available Scripts
 
@@ -83,17 +74,12 @@ Usage: `./plo-import export.zip`
 
 <a name="front-config"></a>
 ## Configuration
-Before running this project, create a `.env` file in the frontend directory with the contents:
+Set the following environment variables. Alternatively, create a `.env` file in the frontend directory with the contents:
 
 ```
+REACT_APP_BACKEND_LOCATION=<location of backend, not including port number>
 REACT_APP_BACKEND_PORT_BASE=<backend port number>
-REACT_APP_SELF_BACKEND=<true|false>
 ```
-
-* The default backend port number is 8008 (N.B: The backend actually uses two successive ports starting with the given port number).
-* If you host the frontend on the same server as the backend, you can remove the need for inputting the backend address by setting the REACT_APP_SELF_BACKEND vairable to `true`
-
-<hr>
 
 ## Available Scripts
 
