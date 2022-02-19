@@ -2,12 +2,13 @@
 
 export PORT_BASE=${PORT_BASE:-"8008"}
 export DATA_DIRECTORY=${DATA_DIRECTORY:-"~.plo/"}
+export MONGODB_LOCATION=${MONGODB_LOCATION:-"127.0.0.1:27017"}
 
 # Export
 if [ "$1" == "--export" ]; then
   # Only proceed if this will not override an existing export
-  if test -f "export.zip"; then
-    echo "Cannot create export as export.zip already exists";
+  if test -f "$2"; then
+    echo "Cannot create export as $2 already exists";
     exit 1;
   fi
 
@@ -20,12 +21,12 @@ if [ "$1" == "--export" ]; then
 
   # At this point there are no name clashes
   pushd "export" || exit 2;
-  mongoexport --collection=users --db=pictureLayoutOrganiser --out=users.json;
-  mongoexport --collection=content --db=pictureLayoutOrganiser --out=content.json;
+  mongoexport --host="$MONGODB_LOCATION" --collection=users --db=pictureLayoutOrganiser --out=users.json;
+  mongoexport --host="$MONGODB_LOCATION" --collection=content --db=pictureLayoutOrganiser --out=content.json;
   cp -r "$DATA_DIRECTORY" "./media";
   popd || exit 2;
-  zip -r "export.zip" "export";
-  printf "\nSuccessfully exported to %s/export.zip\n" "$(pwd)";
+  zip -r "$2" "export";
+  printf "\nSuccessfully exported to $2\n";
 
   # Cleanup
   rm -rf "export/";
@@ -45,8 +46,8 @@ if [ "$1" == "--import" ]; then
   unzip "$2"
   pushd "export" || exit 2;
 
-  mongoimport --collection=users --db=pictureLayoutOrganiser --file=users.json;
-  mongoimport --collection=content --db=pictureLayoutOrganiser --file=content.json;
+  mongoimport --host="$MONGODB_LOCATION" --collection=users --db=pictureLayoutOrganiser --file=users.json;
+  mongoimport --host="$MONGODB_LOCATION" --collection=content --db=pictureLayoutOrganiser --file=content.json;
 
   # If data directory does not already exist, make it
   mkdir "$DATA_DIRECTORY" &> /dev/null;

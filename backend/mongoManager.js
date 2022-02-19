@@ -2,8 +2,7 @@ const mongo = require('mongodb')
 const MongoClient = mongo.MongoClient
 const ThumbnailGenerator = require('video-thumbnail-generator').default
 
-const mongoIP = '127.0.0.1'
-const url = 'mongodb://' + mongoIP + ':27017';
+const url = 'mongodb://' + process.env.MONGODB_LOCATION
 const dbName = 'pictureLayoutOrganiser'
 
 var db
