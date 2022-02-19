@@ -111,3 +111,17 @@ The build is minified and the filenames include the hashes.<br>
 Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+
+# Docker
+
+The full stack application has been dockerized using `docker-compose`.
+This dockerization is recommended for deployment rather than local development.
+
+For a quick production-ready full-stack docker build, make a few simple edits to `docker-compose.yml`.
+
+* Update any port mappings to your choice
+    * Ensure the frontend build argument, `REACT_APP_BACKEND_PORT_BASE`, is updated to match your selection
+* Update the frontend build argument, `REACT_APP_BACKEND_LOCATION`, to reachable location of the backend.
+    * N.B. this location is backed into the frontend build.
+    This is typically the IP of your docker host.
+    Since this is a web application, the backend must be reachable from any client that can load the served frontend.
