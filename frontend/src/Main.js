@@ -6,7 +6,6 @@ import useStyles from './style'
 import {Progress} from 'reactstrap'
 import {
   Button,
-  TextField,
   FormControl,
   FormControlLabel,
   Select,
@@ -51,7 +50,6 @@ const MAX_IN_GALLERY = 10
 const NONE_INDEX = -1
 const EMPTY_USER = ''
 
-const ENTER_KEY = 13
 const ESC_KEY = 27
 const LEFT_KEY = 37
 const UP_KEY = 38
