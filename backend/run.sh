@@ -1,5 +1,7 @@
-export PORT_BASE=8008
-export DATA_DIRECTORY=~.plo/
+#!/usr/bin/env bash
+
+export PORT_BASE=${PORT_BASE:-"8008"}
+export DATA_DIRECTORY=${DATA_DIRECTORY:-"~.plo/"}
 
 # Export
 if [ "$1" == "--export" ]; then
@@ -10,20 +12,20 @@ if [ "$1" == "--export" ]; then
   fi
 
   # Only proceed if this does not override an existing directory
-  mkdir export
-  if [ $? != 0 ]; then
+
+  if ! mkdir "export"; then
     echo "Cannot create export as export working directory already exists";
     exit 2;
   fi
 
   # At this point there are no name clashes
-  cd export
+  pushd "export" || exit 2;
   mongoexport --collection=users --db=pictureLayoutOrganiser --out=users.json;
   mongoexport --collection=content --db=pictureLayoutOrganiser --out=content.json;
   cp -r "$DATA_DIRECTORY" "./media";
-  cd ..;
+  popd || exit 2;
   zip -r "export.zip" "export";
-  printf "\nSuccessfully exported to $(pwd)/export.zip\n";
+  printf "\nSuccessfully exported to %s/export.zip\n" "$(pwd)";
 
   # Cleanup
   rm -rf "export/";
@@ -41,7 +43,7 @@ if [ "$1" == "--import" ]; then
   fi
 
   unzip "$2"
-  cd "export";
+  pushd "export" || exit 2;
 
   mongoimport --collection=users --db=pictureLayoutOrganiser --file=users.json;
   mongoimport --collection=content --db=pictureLayoutOrganiser --file=content.json;
@@ -53,7 +55,7 @@ if [ "$1" == "--import" ]; then
   printf "\nSuccessfully imported\n";
 
   # Cleanup
-  cd ..;
+  popd || exit 2;
   rm -rf "export/";
   exit 0;
 fi
