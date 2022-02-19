@@ -1,0 +1,44 @@
+version: '3.2'
+
+services:
+  mongo:
+    image: mongo
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo mongo:27017/test --quiet
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    volumes:
+      - mongo-data:/data/db
+
+  backend:
+    build:
+      context: ./backend
+    depends_on:
+      mongo:
+        condition: service_healthy
+    ports:
+      - "8008:8008"
+      - "8009:8009"
+    environment:
+      - MONGODB_LOCATION=mongo:27017
+      - PORT_BASE=8008
+      - DATA_DIRECTORY=/plo
+    volumes:
+      - media-data:/plo
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        - REACT_APP_BACKEND_LOCATION=127.0.0.1
+        - REACT_APP_BACKEND_PORT_BASE=8008
+    depends_on:
+      - backend
+    ports:
+      - "8000:8000"
+
+volumes:
+  mongo-data:
+  media-data:
