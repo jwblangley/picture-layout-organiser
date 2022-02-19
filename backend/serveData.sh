@@ -2,7 +2,7 @@
 PORT=$((PORT_BASE+1))
 
 # If directory does not exist, create it and change to it
-if [[ -d "$DATA_DIRECTORY" ]];
+if [[ ! -d "$DATA_DIRECTORY" ]];
 then
     mkdir "$DATA_DIRECTORY";
     echo "Creating directory: $DATA_DIRECTORY"
