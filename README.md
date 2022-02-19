@@ -56,18 +56,20 @@ The default is `127.0.0.1:27017`.
 Runs the backend application
 
 ### `plo-export`
-Saves all stored content to `export.zip`
+Saves all stored content to an zip archive.
+
+Usage: `./plo-export.sh export.zip`
 
 ### `plo-import`
 Restores all content from a previous export.
 
-Usage: `./plo-import export.zip`
+Usage: `./plo-import.sh export.zip`
 
 ### `plo-compress-existing`
 For existing applications prior to the introduction of image compression.
 Compresses existing images in the application to be in line with newer versions.
 
-Usage: `./plo-import export.zip`
+Usage: `./plo-compress-existing.sh`
 
 
 # Frontend
@@ -80,6 +82,8 @@ Set the following environment variables. Alternatively, create a `.env` file in 
 REACT_APP_BACKEND_LOCATION=<location of backend, not including port number>
 REACT_APP_BACKEND_PORT_BASE=<backend port number>
 ```
+
+N.B. these arguments need to be available at build time to be embedded by webpack.
 
 ## Available Scripts
 
