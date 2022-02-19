@@ -14,4 +14,4 @@ RUN npm install
 # Create production build
 RUN npm run build
 
-CMD "serve -p 8000 build"
+CMD ["serve", "-p", "8000", "build"]
