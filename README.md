@@ -131,3 +131,4 @@ For a quick production-ready full-stack docker build, make a few simple edits to
     * N.B. this location is backed into the frontend build.
     This is typically the IP of your docker host.
     Since this is a web application, the backend must be reachable from any client that can load the served frontend.
+* (Optional) change the volumes to bind mounts to specify the location stored data.
